@@ -10,7 +10,7 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "format": "prettier . --write",
-    "format:ci": "prettier --list-different **/*.{ts,tsx,js,jsx,mts,mjs}"
+    "format:ci": "prettier . --check"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

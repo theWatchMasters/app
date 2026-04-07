@@ -8,13 +8,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+      - run: corepack enable
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: yarn
-      - run: corepack enable
-      - run: corepack yarn install --immutable --immutable-cache --check-cache
-      - run: corepack yarn format:ci
-      - run: corepack yarn lint
-      - run: corepack yarn expo prebuild
+      - run: yarn install --immutable --immutable-cache --check-cache
+      - run: yarn format:ci
+      - run: yarn lint
+      - run: yarn expo prebuild

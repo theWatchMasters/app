@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "time-watcher",
-    "slug": "time-watcher",
+    "name": "NowPower",
+    "slug": "nowpower",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "timewatcher",
+    "scheme": "nowpower",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {

@@ -1,13 +1,16 @@
 import { useSession } from "@/components/auth/SessionContext";
-import { Text, View } from "react-native";
+import { Link } from "expo-router";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   const session = useSession();
   return (
-    <View
-      className="items-center justify-center"
-    >
-      <Text>I am {session.session.signed_in ? "" : "not "}signed in.</Text>
-    </View>
+    <SafeAreaProvider>
+      <SafeAreaView
+        className="items-center justify-center"
+      >
+        <Link href={"/login"}>Login</Link>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }

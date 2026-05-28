@@ -8,5 +8,7 @@ export default function RootLayout() {
   useEffect(() => {
     loadSession({ session, setSession });
   })
-  return <SessionContext value={{ session, setSession }}><Stack /></SessionContext>;
+  return <SessionContext value={{ session, setSession }}>
+    <Stack screenOptions={{ headerShown: false }} />
+  </SessionContext>;
 }

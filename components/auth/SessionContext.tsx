@@ -24,7 +24,7 @@ export const useSession = () => useContext(SessionContext);
 
 export const loadSession = async (session: SessionContextType) => {
     const value = await fetch(API_BASE_URL + "/me");
-    if (value.status == 401) {
+    if (value.status === 401) {
         return session.setSession({signed_in: false});
     } 
     const data = await value.json();
@@ -41,7 +41,7 @@ export const loadSession = async (session: SessionContextType) => {
  */
 export const authFetch = async (session: SessionContextType, ...args: Parameters<typeof fetch>): ReturnType<typeof fetch> => {
     const value = await fetch(...args);
-    if (value.status == 401) {
+    if (value.status === 401) {
         session.setSession({ signed_in: false });
     }
     return value;

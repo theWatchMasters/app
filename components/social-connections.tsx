@@ -35,11 +35,19 @@ export function SocialConnections() {
             className="sm:flex-1"
             onPress={() => {
               // TODO: Authenticate with social provider and navigate to protected screen if successful
-            }}>
+            }}
+          >
             <Image
-              className={cn('size-4', strategy.useTint && Platform.select({ web: 'dark:invert' }))}
+              className={cn(
+                'size-4',
+                strategy.useTint && Platform.select({ web: 'dark:invert' }),
+              )}
               tintColor={Platform.select({
-                native: strategy.useTint ? (colorScheme === 'dark' ? 'white' : 'black') : undefined,
+                native: strategy.useTint
+                  ? colorScheme === 'dark'
+                    ? 'white'
+                    : 'black'
+                  : undefined,
               })}
               source={strategy.source}
             />

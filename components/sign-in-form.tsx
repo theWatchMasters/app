@@ -77,7 +77,7 @@ export function SignInForm() {
       errorText = t('login.errors.network_failure');
     else if (response instanceof Response && response !== null)
       errorText = t(((await response.json()) as IErrorResponse).error);
-    else errorText = t('errors.generic_error');
+    else errorText = t('error.generic_error');
     Toast.show({
       type: 'error',
       swipeable: true,

@@ -10,8 +10,11 @@ i18n.use(initReactI18next).init({
   resources: {
     en: {
       translation: {
-        errors: {
+        error: {
           generic: 'An unexpected error occured',
+          invalid_credentials: "The email or password is incorrect",
+          duplicate_credentials: 'An account with this email already exists',
+          invalid_2fa: "The 2FA code is invalid"
         },
         login: {
           headings: {
@@ -71,6 +74,24 @@ i18n.use(initReactI18next).init({
             'password-maxLength': 'The password is too long',
             'password-required': 'The password is required',
             'password-invalid': 'The password is invalid',
+            heading: 'Login Error',
+            network_failure: 'There was an error submitting the form',
+          },
+        },
+        mfa: {
+          headings: {
+            text1: 'Enter your 2FA Code',
+            text2: 'Using your preferred authenticator app, enter the 6-digit code below',
+            code: "Code"
+          },
+          placeholders: {
+            code: '000000',
+          },
+          errors: {
+            'code-minLength': 'The code is too short',
+            'code-maxLength': 'The code is too long',
+            'code-required': 'The code is required',
+            'code-invalid': 'The code is invalid',
             heading: 'Login Error',
             network_failure: 'There was an error submitting the form',
           },

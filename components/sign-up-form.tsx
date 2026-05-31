@@ -20,7 +20,7 @@ import { Pressable, type TextInput, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { useSession } from './auth/SessionContext';
 
-interface ILoginType {
+interface IRegisterType {
   email: string;
   password: string;
 }
@@ -31,21 +31,13 @@ interface User {
   email: string;
 }
 
-type ILoginResponse =
-  | {
-      success: true;
-      '2fa_enabled': false;
-      user: User;
-    }
-  | {
-      success: true;
-      '2fa_enabled': true;
-      access_token: string;
-    };
-
-type IErrorResponse = {
-  success: false;
-  error: string;
+interface IRegisterResponse {
+  success: true;
+  user: User;
+}
+interface IErrorResponse {
+    success: false;
+    error: string;
 };
 
 export function SignUpForm() {
@@ -53,7 +45,7 @@ export function SignUpForm() {
   const { t } = useTranslation();
   const session = useSession();
 
-  const { control, handleSubmit } = useForm<ILoginType>({
+  const { control, handleSubmit } = useForm<IRegisterType>({
     defaultValues: {
       email: '',
       password: '',
@@ -65,19 +57,19 @@ export function SignUpForm() {
     error,
   }:
     | {
-        response: Response;
-        error?: undefined;
-      }
+      response: Response;
+      error?: undefined;
+    }
     | {
-        response?: undefined;
-        error: unknown;
-      }) => {
+      response?: undefined;
+      error: unknown;
+    }) => {
     let errorText: string;
     if (error instanceof TypeError)
       errorText = t('register.errors.network_failure');
     else if (response instanceof Response && response !== null)
       errorText = t(((await response.json()) as IErrorResponse).error);
-    else errorText = t('errors.generic_error');
+    else errorText = t('error.generic_error');
     Toast.show({
       type: 'error',
       swipeable: true,
@@ -87,7 +79,7 @@ export function SignUpForm() {
     });
   };
 
-  const onValidationError = (errors: FieldErrors<ILoginType>) => {
+  const onValidationError = (errors: FieldErrors<IRegisterType>) => {
     for (let i of Object.keys(errors) as (keyof typeof errors)[]) {
       Toast.show({
         type: 'error',
@@ -106,18 +98,9 @@ export function SignUpForm() {
   }, [session]);
 
   const onSuccess = async ({ response }: { response: Response }) => {
-    const data = (await response.json()) as ILoginResponse;
-    if (data['2fa_enabled']) {
-      router.navigate({
-        pathname: '/2fa/[token]',
-        params: {
-          token: data.access_token,
-        },
-      });
-    } else {
-      session.setSession({ signed_in: true, ...data.user });
-      router.navigate('/');
-    }
+    const data = (await response.json()) as IRegisterResponse;
+    session.setSession({ signed_in: true, ...data.user });
+    router.navigate('/');
   };
 
   function onEmailSubmitEditing() {
@@ -128,7 +111,7 @@ export function SignUpForm() {
     <Form
       className="gap-6"
       control={control}
-      action={API_BASE_URL + '/login'}
+      action={API_BASE_URL + '/register'}
       method="post"
       encType="application/json"
       onSuccess={onSuccess}
@@ -141,6 +124,7 @@ export function SignUpForm() {
             </CardTitle>
             <CardDescription className="text-center sm:text-left">
               {t('register.headings.text2')}
+              {}
             </CardDescription>
           </CardHeader>
           <CardContent className="gap-6">

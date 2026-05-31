@@ -1,1 +1,1 @@
-export const API_BASE_URL = 'https://tmp.test/';
+export const API_BASE_URL = 'http://10.0.0.20:3001/';

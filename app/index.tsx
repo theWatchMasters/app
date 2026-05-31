@@ -7,7 +7,7 @@ export default function Index() {
   return (
     <SafeAreaProvider>
       <SafeAreaView className="items-center justify-center">
-        <Link href={'/login'}>Login</Link>
+        <Link href={'/login'} className='text-foreground'>Login</Link>
       </SafeAreaView>
     </SafeAreaProvider>
   );

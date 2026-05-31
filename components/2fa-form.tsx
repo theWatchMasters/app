@@ -16,10 +16,11 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { useSession } from './auth/SessionContext';
+import { Text } from './ui/text';
 
 interface IMFAType {
   token: string;
-  code: number;
+  code: string;
 }
 
 interface User {
@@ -44,7 +45,7 @@ export function MFAForm({ access_token }: { access_token: string }) {
   const { control, handleSubmit } = useForm<IMFAType>({
     defaultValues: {
       token: '',
-      code: 0,
+      code: '',
     },
   });
 
@@ -91,6 +92,7 @@ export function MFAForm({ access_token }: { access_token: string }) {
     session.setSession({ signed_in: true, ...data.user });
     router.navigate('/');
   };
+  console.log(access_token)
 
   return (
     <Form
@@ -103,13 +105,16 @@ export function MFAForm({ access_token }: { access_token: string }) {
       onError={onError}
       render={({ submit }) => (
         <Card className="border-border/0 sm:border-border shadow-none sm:shadow-sm sm:shadow-black/5 w-full">
+          <View className="absolute -top-3 left-[30%] bg-secondary w-full h-6 text-center w-[40%] rounded-full"> 
+            <Text className='text-center w-min-content'>{jose.decodeJwt(access_token).email as string || ""}</Text>
+          </View>
+
           <CardHeader>
             <CardTitle className="text-center text-xl sm:text-left">
               {t('mfa.headings.text1')}
             </CardTitle>
             <CardDescription className="text-center sm:text-left">
               {t('mfa.headings.text2')}
-              {jose.decodeJwt(access_token).sub || ''}
             </CardDescription>
           </CardHeader>
           <CardContent className="gap-6">
@@ -143,7 +148,7 @@ export function MFAForm({ access_token }: { access_token: string }) {
                         if (value.length === 6)
                           handleSubmit(() => submit(), onValidationError)();
                       }}
-                      value={String(value)}
+                      value={value}
                     />
                   </View>
                 )}

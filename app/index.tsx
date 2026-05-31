@@ -1,5 +1,5 @@
 import { useSession } from '@/components/auth/SessionContext';
-import { Link } from 'expo-router';
+import Vault from '@/components/vault';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Index() {
@@ -7,7 +7,7 @@ export default function Index() {
   return (
     <SafeAreaProvider>
       <SafeAreaView className="items-center justify-center">
-        <Link href={'/login'} className='text-foreground'>Login</Link>
+        <Vault />
       </SafeAreaView>
     </SafeAreaProvider>
   );

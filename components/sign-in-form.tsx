@@ -33,15 +33,15 @@ interface User {
 
 type ILoginResponse =
   | {
-      success: true;
-      '2fa_enabled': false;
-      user: User;
-    }
+    success: true;
+    '2fa_enabled': false;
+    user: User;
+  }
   | {
-      success: true;
-      '2fa_enabled': true;
-      access_token: string;
-    };
+    success: true;
+    '2fa_enabled': true;
+    access_token: string;
+  };
 
 type IErrorResponse = {
   success: false;
@@ -65,18 +65,22 @@ export function SignInForm() {
     error,
   }:
     | {
-        response: Response;
-        error?: undefined;
-      }
+      response: Response;
+      error?: undefined;
+    }
     | {
-        response?: undefined;
-        error: unknown;
-      }) => {
+      response?: undefined;
+      error: unknown;
+    }) => {
     let errorText: string;
     if (error instanceof TypeError)
       errorText = t('login.errors.network_failure');
     else if (response instanceof Response && response !== null)
-      errorText = t(((await response.json()) as IErrorResponse).error);
+      try {
+        errorText = t(((await response.json()) as IErrorResponse).error);
+      } catch {
+        errorText = t('error.generic');
+      }
     else errorText = t('error.generic_error');
     Toast.show({
       type: 'error',
@@ -116,7 +120,11 @@ export function SignInForm() {
       });
     } else {
       session.setSession({ signed_in: true, ...data.user });
-      router.navigate('/');
+      if (router.canGoBack()) {
+        router.back();
+      } else {
+        router.navigate('/');
+      }
     }
   };
 
@@ -128,7 +136,7 @@ export function SignInForm() {
     <Form
       className="gap-6"
       control={control}
-      action={API_BASE_URL + '/login'}
+      action={API_BASE_URL + 'login'}
       method="post"
       encType="application/json"
       onSuccess={onSuccess}
@@ -229,7 +237,7 @@ export function SignInForm() {
               {t('login.sign_up.1')}{' '}
               <Pressable
                 onPress={() => {
-                  router.navigate('/register');
+                  router.replace('/register');
                 }}
               >
                 <Text className="text-sm underline underline-offset-4">

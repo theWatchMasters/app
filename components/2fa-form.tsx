@@ -64,7 +64,11 @@ export function MFAForm({ access_token }: { access_token: string }) {
     let errorText: string;
     if (error instanceof TypeError) errorText = t('mfa.errors.network_failure');
     else if (response instanceof Response && response !== null)
-      errorText = t(((await response.json()) as IErrorResponse).error);
+      try {
+        errorText = t(((await response.json()) as IErrorResponse).error);
+      } catch {
+        errorText = t('error.generic');
+      }
     else errorText = t('mfa.generic_error');
     Toast.show({
       type: 'error',
@@ -98,14 +102,14 @@ export function MFAForm({ access_token }: { access_token: string }) {
     <Form
       className="gap-6"
       control={control}
-      action={API_BASE_URL + '/mfa'}
+      action={API_BASE_URL + 'mfa'}
       method="post"
       encType="application/json"
       onSuccess={onSuccess}
       onError={onError}
       render={({ submit }) => (
         <Card className="border-border/0 sm:border-border shadow-none sm:shadow-sm sm:shadow-black/5 w-full">
-          <View className="absolute -top-3 left-[30%] bg-secondary w-full h-6 text-center w-[40%] rounded-full"> 
+          <View className="absolute -top-3 left-[30%] bg-secondary h-6 text-center right-[30%] rounded-full">
             <Text className='text-center w-min-content'>{jose.decodeJwt(access_token).email as string || ""}</Text>
           </View>
 

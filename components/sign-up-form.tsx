@@ -68,7 +68,11 @@ export function SignUpForm() {
     if (error instanceof TypeError)
       errorText = t('register.errors.network_failure');
     else if (response instanceof Response && response !== null)
-      errorText = t(((await response.json()) as IErrorResponse).error);
+      try {
+        errorText = t(((await response.json()) as IErrorResponse).error);
+      } catch {
+        errorText = t('error.generic');
+      }
     else errorText = t('error.generic_error');
     Toast.show({
       type: 'error',
@@ -100,7 +104,11 @@ export function SignUpForm() {
   const onSuccess = async ({ response }: { response: Response }) => {
     const data = (await response.json()) as IRegisterResponse;
     session.setSession({ signed_in: true, ...data.user });
-    router.navigate('/');
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.navigate('/');
+    }
   };
 
   function onEmailSubmitEditing() {
@@ -111,7 +119,7 @@ export function SignUpForm() {
     <Form
       className="gap-6"
       control={control}
-      action={API_BASE_URL + '/register'}
+      action={API_BASE_URL + 'register'}
       method="post"
       encType="application/json"
       onSuccess={onSuccess}
@@ -215,7 +223,7 @@ export function SignUpForm() {
               {t('register.sign_in.1')}{' '}
               <Pressable
                 onPress={() => {
-                  router.navigate('/login');
+                  router.replace('/login');
                 }}
               >
                 <Text className="text-sm underline underline-offset-4">

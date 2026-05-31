@@ -97,6 +97,26 @@ i18n.use(initReactI18next).init({
             network_failure: 'There was an error submitting the form',
           },
         },
+        vault_new: {
+          headings: {
+            text1: 'Enter task details',
+            text2: 'Fill in the details of the task you want to track',
+            title: "Title",
+            amount: "Amount ($)",
+            length: "Task Length"
+          },
+          continue: 'Continue',
+          placeholders: {
+            title: 'Title...'
+          },
+          errors: {
+            'title-maxLength': 'The title is too long',
+            'amount-required': 'The amount is required',
+            'length-required': 'The task length is required',
+            heading: 'Task Creation Error',
+            network_failure: 'There was an error submitting the form',
+          },
+        },
       },
     },
   },

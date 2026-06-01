@@ -1,5 +1,5 @@
 import { useSession } from "@/components/auth/SessionContext";
-import { NewTaskForm } from "@/components/new-task";
+import { NewTaskForm } from "@/components/vault/new-task";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";

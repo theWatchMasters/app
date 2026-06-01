@@ -17,8 +17,9 @@ import { Controller, FieldErrors, Form, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import Toast from 'react-native-toast-message';
-import { useSession } from './auth/SessionContext';
+import { useSession } from '../auth/SessionContext';
 import PaymentStub from './payment-stub';
+import { useTask } from './TaskContext';
 const MAX_AMOUNT = 100;
 const LENGTH_OPTIONS = ["15m", "30m", "1h", "2h", "4h", "8h", "12h", "1d", "2d", "3d"];
 
@@ -99,9 +100,15 @@ export function NewTaskForm() {
             router.replace('/login');
         }
     }, [session]);
-
+    const {task, setTask} = useTask();
     const onSuccess = async ({ response }: { response: Response }) => {
         setPaymentOpen(true);
+        setTask({
+            task_active: true,
+            title: "abc",
+            ends_at: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+            id: "123"
+        })
     }
     
     return (

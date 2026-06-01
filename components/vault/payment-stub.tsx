@@ -1,7 +1,7 @@
 import { router } from "expo-router";
-import { Button } from "./ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./ui/dialog";
-import { Text } from "./ui/text";
+import { Button } from "../ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Text } from "../ui/text";
 
 export default function PaymentStub({ open, setOpen }: { open: boolean; setOpen: (open: boolean) => void }) {
     const onChange = () => {

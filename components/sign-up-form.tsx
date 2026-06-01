@@ -181,18 +181,6 @@ export function SignUpForm() {
                       <Label htmlFor="password">
                         {t('register.headings.password')}
                       </Label>
-                      <Button
-                        variant="link"
-                        size="sm"
-                        className="web:h-fit ml-auto h-4 px-1 py-0 sm:h-4"
-                        onPress={() => {
-                          // TODO: Navigate to forgot password screen
-                        }}
-                      >
-                        <Text className="font-normal leading-4">
-                          {t('register.forgot_password')}
-                        </Text>
-                      </Button>
                     </View>
                     <Input
                       ref={passwordInputRef}

@@ -54,7 +54,6 @@ i18n.use(initReactI18next).init({
             email: 'Email',
             password: 'Password',
           },
-          forgot_password: 'Forgot your password?',
           continue: 'Continue',
           sign_in: {
             '1': 'Already have an account?',

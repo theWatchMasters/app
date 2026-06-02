@@ -7,7 +7,6 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Index() {
   const session = useSession();
-  console.log(session);
   if (!session.session.signed_in) {
     return <Redirect href="/login" />;
   }

@@ -15,7 +15,6 @@
   "dependencies": {
     "@babel/core": "^7.29.7",
     "@expo-google-fonts/inter": "^0.4.2",
-    "@expo/ui": "~0.2.0-beta.9",
     "@expo/vector-icons": "^15.0.3",
     "@react-native-community/datetimepicker": "8.4.4",
     "@react-native-community/slider": "5.0.1",
@@ -36,6 +35,7 @@
     "expo-haptics": "~15.0.8",
     "expo-image": "~3.0.11",
     "expo-linking": "~8.0.12",
+    "expo-modules-core": "~3.0.30",
     "expo-router": "~6.0.24",
     "expo-splash-screen": "~31.0.13",
     "expo-status-bar": "~3.0.9",

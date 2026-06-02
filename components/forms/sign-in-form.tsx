@@ -12,12 +12,13 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
 import { API_BASE_URL } from '@/constants';
-import { router } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import * as React from 'react';
 import { Controller, Form, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Pressable, type TextInput, View } from 'react-native';
 import { useSession } from '../auth/SessionContext';
+import { setAccessToken } from '../auth/utils';
 import { IUser } from '../types/responses';
 import { handleError, handleValidationError } from './utils';
 
@@ -32,6 +33,7 @@ type ILoginResponse =
     success: true;
     '2fa_enabled': false;
     user: IUser;
+    access_token: string;
   }
   | {
     success: true;
@@ -51,12 +53,10 @@ export function SignInForm() {
       password: '',
     },
   });
-  
-  React.useEffect(() => {
-    if (session.session.signed_in) {
-      router.navigate('/');
-    }
-  }, [session]);
+
+  if (session.session.signed_in) {
+    return <Redirect href="/" />;
+  }
 
   const onSuccess = async ({ response }: { response: Response }) => {
     const data = (await response.json()) as ILoginResponse;
@@ -69,6 +69,7 @@ export function SignInForm() {
       });
     } else {
       session.setSession({ signed_in: true, ...data.user });
+      await setAccessToken(data.access_token);
       if (router.canGoBack()) {
         router.back();
       } else {
@@ -177,7 +178,7 @@ export function SignInForm() {
               />
               <Button
                 className="w-full"
-                onPress={handleSubmit(() => submit(), handleValidationError('login', t))}
+                onPress={() => handleSubmit(() => submit(), handleValidationError('login', t))}
               >
                 <Text>{t('login.continue')}</Text>
               </Button>

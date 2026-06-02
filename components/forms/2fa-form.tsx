@@ -15,6 +15,7 @@ import { Controller, Form, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { useSession } from '../auth/SessionContext';
+import { setAccessToken } from '../auth/utils';
 import { IUser } from '../types/responses';
 import { Text } from '../ui/text';
 import { handleError, handleValidationError } from './utils';
@@ -27,6 +28,7 @@ interface IMFAType {
 interface IMFAResponse {
   success: true;
   user: IUser;
+  access_token: string;
 }
 
 export function MFAForm({ access_token }: { access_token: string }) {
@@ -42,6 +44,7 @@ export function MFAForm({ access_token }: { access_token: string }) {
   const onSuccess = async ({ response }: { response: Response }) => {
     const data = (await response.json()) as IMFAResponse;
     session.setSession({ signed_in: true, ...data.user });
+    await setAccessToken(data.access_token);
     router.navigate('/');
   };
 
@@ -93,7 +96,6 @@ export function MFAForm({ access_token }: { access_token: string }) {
                       onBlur={onBlur}
                       onChangeText={(value) => {
                         onChange(value);
-                        console.log(value);
                         if (value.length === 6) handleSubmit(() => submit(), handleValidationError('mfa', t));
                       }}
                       value={value}

@@ -1,7 +1,7 @@
 import { API_BASE_URL } from '@/constants';
 import { createContext, useContext } from 'react';
-import * as Keychain from 'react-native-keychain';
 import { IUser } from '../types/responses';
+import { clearAccessToken, getAccessToken } from './utils';
 
 export type Session =
   | {
@@ -24,9 +24,9 @@ export const SessionContext = createContext<SessionContextType>({
 export const useSession = () => useContext(SessionContext);
 
 export const loadSession = async (session: SessionContextType) => {
-  const value = await authFetch(session, API_BASE_URL + '/me');
+  const value = await authFetch(session, API_BASE_URL + 'me');
   
-  if (value.status === 401) {
+  if (value === null || value.status === 401) {
     return;
   }
 
@@ -45,11 +45,11 @@ export const loadSession = async (session: SessionContextType) => {
 export const authFetch = async (
   session: SessionContextType,
   ...args: Parameters<typeof fetch>
-): ReturnType<typeof fetch> => {
-  const token = await Keychain.getGenericPassword();
+): Promise<Response | null> => {
+  const token = await getAccessToken();
   if (!token) {
     session.setSession({ signed_in: false });
-    return Promise.reject(new Error('No valid session found'));
+    return null;
   }
   
   args[1] = args[1] || {};
@@ -58,6 +58,7 @@ export const authFetch = async (
   
   const value = await fetch(...args);
   if (value.status === 401) {
+    await clearAccessToken();
     session.setSession({ signed_in: false });
   }
 

@@ -12,12 +12,13 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
 import { API_BASE_URL } from '@/constants';
-import { router } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import * as React from 'react';
 import { Controller, Form, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Pressable, type TextInput, View } from 'react-native';
 import { useSession } from '../auth/SessionContext';
+import { setAccessToken } from '../auth/utils';
 import { IUser } from '../types/responses';
 import { handleError, handleValidationError } from './utils';
 
@@ -29,6 +30,7 @@ interface IRegisterType {
 interface IRegisterResponse {
   success: true;
   user: IUser;
+  access_token: string;
 }
 
 export function SignUpForm() {
@@ -45,20 +47,15 @@ export function SignUpForm() {
 
   
 
-  React.useEffect(() => {
-    if (session.session.signed_in) {
-      router.navigate('/');
-    }
-  }, [session]);
+  if (session.session.signed_in) {
+    return <Redirect href="/" />;
+  }
 
   const onSuccess = async ({ response }: { response: Response }) => {
     const data = (await response.json()) as IRegisterResponse;
     session.setSession({ signed_in: true, ...data.user });
-    if (router.canGoBack()) {
-      router.back();
-    } else {
-      router.navigate('/');
-    }
+    await setAccessToken(data.access_token);
+    router.navigate('/');
   };
 
   function onEmailSubmitEditing() {

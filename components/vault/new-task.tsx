@@ -11,15 +11,17 @@ import { Label } from '@/components/ui/label';
 import { Text } from '@/components/ui/text';
 import { API_BASE_URL } from '@/constants';
 import Slider from '@react-native-community/slider';
-import { router } from 'expo-router';
+import { Redirect } from 'expo-router';
 import * as React from 'react';
-import { Controller, Form, useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
+import { AuthForm } from '../auth/AuthForm';
 import { useSession } from '../auth/SessionContext';
 import { handleError, handleValidationError } from '../forms/utils';
 import PaymentStub from './payment-stub';
-import { useTask } from './TaskContext';
+import { loadTask, useTask } from './TaskContext';
+
 const MAX_AMOUNT = 100;
 const LENGTH_OPTIONS = ["15m", "30m", "1h", "2h", "4h", "8h", "12h", "1d", "2d", "3d"];
 
@@ -29,19 +31,15 @@ interface INewTaskType {
     amount: number;
 }
 
-
-interface ISuccessResponse {
-    success: true;
-    paymentToken: string;
-}
-
 export function NewTaskForm() {
     const { t } = useTranslation();
     const session = useSession();
-    const { setTask } = useTask();
+    const { task, setTask } = useTask();
     const [paymentOpen, setPaymentOpen] = React.useState(false);
     
-
+    React.useEffect(() => {
+        loadTask(session, { task, setTask });
+    }, [task, setTask, session]);
     const { control, handleSubmit } = useForm<INewTaskType>({
         defaultValues: {
             title: null,
@@ -50,11 +48,9 @@ export function NewTaskForm() {
         },
     });
 
-    React.useEffect(() => {
-        if (!session.session.signed_in) {
-            router.replace('/login');
-        }
-    }, [session]);
+    if (!session.session.signed_in) {
+        return <Redirect href="/login" />;
+    }
 
     
     const onSuccess = async ({ response }: { response: Response }) => {
@@ -68,7 +64,7 @@ export function NewTaskForm() {
     }
     
     return (
-        <Form
+        <AuthForm
             className="gap-6"
             control={control}
             action={API_BASE_URL + 'vault/new'}

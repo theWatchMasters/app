@@ -17,12 +17,19 @@ import '../global.css';
 
 export default function RootLayout() {
   const [session, setSession] = useState<Session>({ signed_in: false });
-  const [task, setTask] = useState<Task>({ task_active: false })
+  const [task, setTask] = useState<Task>({ task_active: false });
+  const [isLoading, setIsLoading] = useState(true);
   const { colorScheme } = useColorScheme();
   useEffect(() => {
-    loadSession({ session, setSession });
-  }, [session]);
+    (async () => {
+      loadSession({ session, setSession });
+      setIsLoading(false);
+    })();
+  }, []);
 
+  if (isLoading) {
+    return null;
+  }
   return (
     <ThemeProvider value={NAV_THEME[colorScheme ?? 'light']}>
       <TaskContext value={{ task, setTask }}>

@@ -15,7 +15,6 @@ type ReactHookFormErrorHandler = ({
 
 export function handleError(translationKey: string, t: (arg0: string) => string): ReactHookFormErrorHandler {
     return async ({ response, error }) => {
-        console.log(response, error);
         let errorText: string;
         if (error instanceof TypeError) {
             errorText = t(`${translationKey}.errors.network_failure`);
@@ -23,10 +22,10 @@ export function handleError(translationKey: string, t: (arg0: string) => string)
             try {
                 errorText = t(((await response.json()) as IErrorResponse).error);
             } catch {
-                errorText = t(`${translationKey}.errors.generic`);
+                errorText = t("error.generic");
             }
         } else {
-            errorText = t(`${translationKey}.generic_error`);
+            errorText = t("error.generic");
         }
         Toast.show({
             type: 'error',

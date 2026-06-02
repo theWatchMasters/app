@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@/constants";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable } from "react-native";
@@ -24,7 +25,7 @@ export default function Vault() {
                 const seconds = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
                 setTimer(`${hours}:${minutes}:${seconds}`);
                 if (diff <= 0) {
-                    authFetch(session, "/task/incomplete", {
+                    authFetch(session, API_BASE_URL + "task/incomplete", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
@@ -33,13 +34,26 @@ export default function Vault() {
                             id: task.id,
                         })
                     })
-                    setTask({ task_active: false})
+                    setTask({ task_active: false })
                     clearInterval(interval);
                 }
             }, 1000);
             return () => clearInterval(interval);
         }
     }, [task, setTimer, session, setTask]);
+    const onSubmit = async () => {
+        if (!task.task_active) return;
+        await authFetch(session, API_BASE_URL + "task/complete", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                id: task.id,
+            })
+        });
+        setTask({ task_active: false });
+    }
     return (
         <Pressable onPress={() => router.navigate("/vault/new")}>
             <Card className="rounded-[10vw] w-[80vw] h-[80vw] items-center justify-center border-primary border-[3px] shadow-lg shadow-primary" style={task.task_active ? { borderWidth: 24, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, borderBottomWidth: 0 } : {}}>
@@ -49,7 +63,7 @@ export default function Vault() {
                 </CardHeader>
             </Card>
             {task.task_active && (
-                <Button className="rounded-t-none">
+                <Button className="rounded-t-none" onPress={onSubmit}>
                     <Text className="text-lg font-bold">SUBMIT</Text>
                 </Button>
             )}

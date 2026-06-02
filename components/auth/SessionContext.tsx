@@ -7,9 +7,9 @@ export type Session =
   | {
       signed_in: false;
     }
-  | {
+  | ({
       signed_in: true;
-    } & IUser;
+    } & IUser);
 
 export type SessionContextType = {
   session: Session;
@@ -25,7 +25,7 @@ export const useSession = () => useContext(SessionContext);
 
 export const loadSession = async (session: SessionContextType) => {
   const value = await authFetch(session, API_BASE_URL + 'me');
-  
+
   if (value === null || value.status === 401) {
     return;
   }
@@ -51,11 +51,11 @@ export const authFetch = async (
     session.setSession({ signed_in: false });
     return null;
   }
-  
+
   args[1] = args[1] || {};
   args[1].headers = new Headers(args[1].headers || {});
   args[1].headers.set('Authorization', `Bearer ${token}`);
-  
+
   const value = await fetch(...args);
   if (value.status === 401) {
     await clearAccessToken();

@@ -45,8 +45,6 @@ export function SignUpForm() {
     },
   });
 
-  
-
   if (session.session.signed_in) {
     return <Redirect href="/" />;
   }
@@ -135,7 +133,7 @@ export function SignUpForm() {
                       returnKeyType="send"
                       onSubmitEditing={handleSubmit(
                         () => submit(),
-                        handleValidationError('register', t)
+                        handleValidationError('register', t),
                       )}
                       placeholder={t('register.placeholders.password')}
                       onBlur={onBlur}
@@ -148,7 +146,10 @@ export function SignUpForm() {
               />
               <Button
                 className="w-full"
-                onPress={handleSubmit(() => submit(), handleValidationError('register', t))}
+                onPress={handleSubmit(
+                  () => submit(),
+                  handleValidationError('register', t),
+                )}
               >
                 <Text>{t('register.continue')}</Text>
               </Button>

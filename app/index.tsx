@@ -15,7 +15,7 @@ export default function Index() {
     <SafeAreaProvider>
       <SafeAreaView className="items-center justify-center">
         <Vault />
-        <Separator className='w-[80%] m-4' />
+        <Separator className="w-[80%] m-4" />
         <VaultHistory />
       </SafeAreaView>
     </SafeAreaProvider>

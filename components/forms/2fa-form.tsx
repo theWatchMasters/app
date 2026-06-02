@@ -60,7 +60,9 @@ export function MFAForm({ access_token }: { access_token: string }) {
       render={({ submit }) => (
         <Card className="border-border/0 sm:border-border shadow-none sm:shadow-sm sm:shadow-black/5 w-full">
           <View className="absolute -top-3 left-[30%] bg-secondary h-6 text-center right-[30%] rounded-full">
-            <Text className='text-center w-min-content'>{jose.decodeJwt(access_token).email as string || ""}</Text>
+            <Text className="text-center w-min-content">
+              {(jose.decodeJwt(access_token).email as string) || ''}
+            </Text>
           </View>
 
           <CardHeader>
@@ -91,12 +93,19 @@ export function MFAForm({ access_token }: { access_token: string }) {
                       autoComplete="one-time-code"
                       autoCapitalize="none"
                       returnKeyType="next"
-                      onSubmitEditing={handleSubmit(() => submit(), handleValidationError('mfa', t))}
+                      onSubmitEditing={handleSubmit(
+                        () => submit(),
+                        handleValidationError('mfa', t),
+                      )}
                       placeholder={t('mfa.placeholders.code')}
                       onBlur={onBlur}
                       onChangeText={(value) => {
                         onChange(value);
-                        if (value.length === 6) handleSubmit(() => submit(), handleValidationError('mfa', t));
+                        if (value.length === 6)
+                          handleSubmit(
+                            () => submit(),
+                            handleValidationError('mfa', t),
+                          );
                       }}
                       value={value}
                     />

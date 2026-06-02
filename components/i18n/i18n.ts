@@ -100,13 +100,13 @@ i18n.use(initReactI18next).init({
           headings: {
             text1: 'Enter task details',
             text2: 'Fill in the details of the task you want to track',
-            title: "Title",
-            amount: "Amount ($)",
-            length: "Task Length"
+            title: 'Title',
+            amount: 'Amount ($)',
+            length: 'Task Length',
           },
           continue: 'Continue',
           placeholders: {
-            title: 'Title...'
+            title: 'Title...',
           },
           errors: {
             'title-maxLength': 'The title is too long',

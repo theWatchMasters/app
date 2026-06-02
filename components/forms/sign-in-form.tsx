@@ -27,20 +27,18 @@ interface ILoginType {
   password: string;
 }
 
-
 type ILoginResponse =
   | {
-    success: true;
-    '2fa_enabled': false;
-    user: IUser;
-    access_token: string;
-  }
+      success: true;
+      '2fa_enabled': false;
+      user: IUser;
+      access_token: string;
+    }
   | {
-    success: true;
-    '2fa_enabled': true;
-    access_token: string;
-  };
-
+      success: true;
+      '2fa_enabled': true;
+      access_token: string;
+    };
 
 export function SignInForm() {
   const passwordInputRef = React.useRef<TextInput>(null);
@@ -165,7 +163,7 @@ export function SignInForm() {
                       returnKeyType="send"
                       onSubmitEditing={handleSubmit(
                         () => submit(),
-                        handleValidationError('login', t)
+                        handleValidationError('login', t),
                       )}
                       placeholder={t('login.placeholders.password')}
                       onBlur={onBlur}
@@ -178,7 +176,12 @@ export function SignInForm() {
               />
               <Button
                 className="w-full"
-                onPress={() => handleSubmit(() => submit(), handleValidationError('login', t))}
+                onPress={() =>
+                  handleSubmit(
+                    () => submit(),
+                    handleValidationError('login', t),
+                  )
+                }
               >
                 <Text>{t('login.continue')}</Text>
               </Button>

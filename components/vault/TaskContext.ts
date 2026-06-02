@@ -2,7 +2,6 @@ import { API_BASE_URL } from '@/constants';
 import { createContext, useContext } from 'react';
 import { authFetch, SessionContextType } from '../auth/SessionContext';
 
-
 export type Task =
   | {
       task_active: false;
@@ -12,8 +11,7 @@ export type Task =
       ends_at: string;
       title: string;
       id: string;
-  }
-
+    };
 
 export type TaskContextType = {
   task: Task;
@@ -27,7 +25,10 @@ export const TaskContext = createContext<TaskContextType>({
 
 export const useTask = () => useContext(TaskContext);
 
-export const loadTask = async (session: SessionContextType, task: TaskContextType) => {
+export const loadTask = async (
+  session: SessionContextType,
+  task: TaskContextType,
+) => {
   const value = await authFetch(session, API_BASE_URL + 'vault/active');
   if (value === null || value.status === 401) {
     return task.setTask({ task_active: false });

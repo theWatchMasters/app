@@ -13,11 +13,11 @@ import { API_BASE_URL } from '@/constants';
 import Slider from '@react-native-community/slider';
 import { router } from 'expo-router';
 import * as React from 'react';
-import { Controller, FieldErrors, Form, useForm } from 'react-hook-form';
+import { Controller, Form, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
-import Toast from 'react-native-toast-message';
 import { useSession } from '../auth/SessionContext';
+import { handleError, handleValidationError } from '../forms/utils';
 import PaymentStub from './payment-stub';
 import { useTask } from './TaskContext';
 const MAX_AMOUNT = 100;
@@ -29,10 +29,6 @@ interface INewTaskType {
     amount: number;
 }
 
-interface IErrorResponse {
-    success: false;
-    error: string;
-}
 
 interface ISuccessResponse {
     success: true;
@@ -42,7 +38,9 @@ interface ISuccessResponse {
 export function NewTaskForm() {
     const { t } = useTranslation();
     const session = useSession();
+    const { setTask } = useTask();
     const [paymentOpen, setPaymentOpen] = React.useState(false);
+    
 
     const { control, handleSubmit } = useForm<INewTaskType>({
         defaultValues: {
@@ -52,55 +50,13 @@ export function NewTaskForm() {
         },
     });
 
-    const onError = async ({
-        response,
-        error,
-    }:
-        | {
-            response: Response;
-            error?: undefined;
-        }
-        | {
-            response?: undefined;
-            error: unknown;
-        }) => {
-        let errorText: string;
-        if (error instanceof TypeError)
-            errorText = t('vault_new.errors.network_failure');
-        else if (response instanceof Response && response !== null)
-            try {
-                errorText = t(((await response.json()) as IErrorResponse).error);
-            } catch (e) {
-                errorText = t('error.generic');
-            }
-        else errorText = t('error.generic');
-        Toast.show({
-            type: 'error',
-            swipeable: true,
-            autoHide: true,
-            text1: t('vault_new.errors.heading'),
-            text2: errorText,
-        });
-    };
-
-    const onValidationError = (errors: FieldErrors<IErrorResponse>) => {
-        for (let i of Object.keys(errors) as (keyof typeof errors)[]) {
-            Toast.show({
-                type: 'error',
-                swipeable: true,
-                autoHide: true,
-                text1: t('vault_new.errors.heading'),
-                text2: t('vault_new.errors.' + i + '-' + errors[i]?.type),
-            });
-        }
-    };
-
     React.useEffect(() => {
         if (!session.session.signed_in) {
             router.replace('/login');
         }
     }, [session]);
-    const {task, setTask} = useTask();
+
+    
     const onSuccess = async ({ response }: { response: Response }) => {
         setPaymentOpen(true);
         setTask({
@@ -119,7 +75,7 @@ export function NewTaskForm() {
             method="post"
             encType="application/json"
             onSuccess={onSuccess}
-            onError={onError}
+            onError={handleError('vault_new', t)}
             render={({ submit }) => (
                 <Card className="border-border/0 sm:border-border shadow-none sm:shadow-sm sm:shadow-black/5 w-full">
                     <CardHeader>
@@ -209,7 +165,7 @@ export function NewTaskForm() {
                             />
                             <Button
                                 className="w-full"
-                                onPress={handleSubmit(() => submit(), onValidationError)}
+                                onPress={handleSubmit(() => submit(), handleValidationError('vault_new', t))}
                             >
                                 <Text>{t('vault_new.continue')}</Text>
                             </Button>

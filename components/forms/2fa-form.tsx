@@ -11,32 +11,22 @@ import { API_BASE_URL } from '@/constants';
 import { router } from 'expo-router';
 import * as jose from 'jose';
 import * as React from 'react';
-import { Controller, FieldErrors, Form, useForm } from 'react-hook-form';
+import { Controller, Form, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
-import Toast from 'react-native-toast-message';
-import { useSession } from './auth/SessionContext';
-import { Text } from './ui/text';
+import { useSession } from '../auth/SessionContext';
+import { IUser } from '../types/responses';
+import { Text } from '../ui/text';
+import { handleError, handleValidationError } from './utils';
 
 interface IMFAType {
   token: string;
   code: string;
 }
 
-interface User {
-  id: string;
-  avatar_id: string;
-  email: string;
-}
-
 interface IMFAResponse {
   success: true;
-  user: User;
-}
-
-interface IErrorResponse {
-  success: false;
-  error: string;
+  user: IUser;
 }
 
 export function MFAForm({ access_token }: { access_token: string }) {
@@ -49,54 +39,11 @@ export function MFAForm({ access_token }: { access_token: string }) {
     },
   });
 
-  const onError = async ({
-    response,
-    error,
-  }:
-    | {
-        response: Response;
-        error?: undefined;
-      }
-    | {
-        response?: undefined;
-        error: unknown;
-      }) => {
-    let errorText: string;
-    if (error instanceof TypeError) errorText = t('mfa.errors.network_failure');
-    else if (response instanceof Response && response !== null)
-      try {
-        errorText = t(((await response.json()) as IErrorResponse).error);
-      } catch {
-        errorText = t('error.generic');
-      }
-    else errorText = t('mfa.generic_error');
-    Toast.show({
-      type: 'error',
-      swipeable: true,
-      autoHide: true,
-      text1: t('mfa.errors.heading'),
-      text2: errorText,
-    });
-  };
-
-  const onValidationError = (errors: FieldErrors<IMFAType>) => {
-    for (let i of Object.keys(errors) as (keyof typeof errors)[]) {
-      Toast.show({
-        type: 'error',
-        swipeable: true,
-        autoHide: true,
-        text1: t('mfa.errors.heading'),
-        text2: t('mfa.errors.' + i + '-' + errors[i]?.type),
-      });
-    }
-  };
-
   const onSuccess = async ({ response }: { response: Response }) => {
     const data = (await response.json()) as IMFAResponse;
     session.setSession({ signed_in: true, ...data.user });
     router.navigate('/');
   };
-  console.log(access_token)
 
   return (
     <Form
@@ -106,7 +53,7 @@ export function MFAForm({ access_token }: { access_token: string }) {
       method="post"
       encType="application/json"
       onSuccess={onSuccess}
-      onError={onError}
+      onError={handleError('mfa', t)}
       render={({ submit }) => (
         <Card className="border-border/0 sm:border-border shadow-none sm:shadow-sm sm:shadow-black/5 w-full">
           <View className="absolute -top-3 left-[30%] bg-secondary h-6 text-center right-[30%] rounded-full">
@@ -141,16 +88,13 @@ export function MFAForm({ access_token }: { access_token: string }) {
                       autoComplete="one-time-code"
                       autoCapitalize="none"
                       returnKeyType="next"
-                      onSubmitEditing={handleSubmit(
-                        () => submit(),
-                        onValidationError,
-                      )}
+                      onSubmitEditing={handleSubmit(() => submit(), handleValidationError('mfa', t))}
                       placeholder={t('mfa.placeholders.code')}
                       onBlur={onBlur}
                       onChangeText={(value) => {
                         onChange(value);
-                        if (value.length === 6)
-                          handleSubmit(() => submit(), onValidationError)();
+                        console.log(value);
+                        if (value.length === 6) handleSubmit(() => submit(), handleValidationError('mfa', t));
                       }}
                       value={value}
                     />

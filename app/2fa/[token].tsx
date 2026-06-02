@@ -1,7 +1,7 @@
-import { MFAForm } from '@/components/2fa-form';
-import { useSession } from '@/components/auth/SessionContext';
-import { router, useLocalSearchParams } from 'expo-router';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { useSession } from "@/components/auth/SessionContext";
+import { MFAForm } from "@/components/forms/2fa-form";
+import { router, useLocalSearchParams } from "expo-router";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function MFAPage() {
   const session = useSession();

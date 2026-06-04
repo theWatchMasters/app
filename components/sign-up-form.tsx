@@ -36,9 +36,9 @@ interface IRegisterResponse {
   user: User;
 }
 interface IErrorResponse {
-    success: false;
-    error: string;
-};
+  success: false;
+  error: string;
+}
 
 export function SignUpForm() {
   const passwordInputRef = React.useRef<TextInput>(null);
@@ -57,13 +57,13 @@ export function SignUpForm() {
     error,
   }:
     | {
-      response: Response;
-      error?: undefined;
-    }
+        response: Response;
+        error?: undefined;
+      }
     | {
-      response?: undefined;
-      error: unknown;
-    }) => {
+        response?: undefined;
+        error: unknown;
+      }) => {
     let errorText: string;
     if (error instanceof TypeError)
       errorText = t('register.errors.network_failure');

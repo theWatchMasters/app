@@ -18,7 +18,7 @@ const SOCIAL_CONNECTION_STRATEGIES = [
     type: 'oauth_microsoft',
     source: { uri: 'https://img.clerk.com/static/microsoft.png?width=160' },
     useTint: false,
-  }
+  },
 ];
 
 export function SocialConnections() {

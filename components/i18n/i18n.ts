@@ -12,9 +12,9 @@ i18n.use(initReactI18next).init({
       translation: {
         error: {
           generic: 'An unexpected error occured',
-          invalid_credentials: "The email or password is incorrect",
+          invalid_credentials: 'The email or password is incorrect',
           duplicate_credentials: 'An account with this email already exists',
-          invalid_2fa: "The 2FA code is invalid"
+          invalid_2fa: 'The 2FA code is invalid',
         },
         login: {
           headings: {
@@ -81,8 +81,9 @@ i18n.use(initReactI18next).init({
         mfa: {
           headings: {
             text1: 'Enter your 2FA Code',
-            text2: 'Using your preferred authenticator app, enter the 6-digit code below',
-            code: "Code"
+            text2:
+              'Using your preferred authenticator app, enter the 6-digit code below',
+            code: 'Code',
           },
           placeholders: {
             code: '000000',

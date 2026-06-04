@@ -53,16 +53,15 @@ export function MFAForm({ access_token }: { access_token: string }) {
     error,
   }:
     | {
-      response: Response;
-      error?: undefined;
-    }
+        response: Response;
+        error?: undefined;
+      }
     | {
-      response?: undefined;
-      error: unknown;
-    }) => {
+        response?: undefined;
+        error: unknown;
+      }) => {
     let errorText: string;
-    if (error instanceof TypeError)
-      errorText = t('mfa.errors.network_failure');
+    if (error instanceof TypeError) errorText = t('mfa.errors.network_failure');
     else if (response instanceof Response && response !== null)
       errorText = t(((await response.json()) as IErrorResponse).error);
     else errorText = t('mfa.generic_error');
@@ -110,7 +109,7 @@ export function MFAForm({ access_token }: { access_token: string }) {
             </CardTitle>
             <CardDescription className="text-center sm:text-left">
               {t('mfa.headings.text2')}
-              {jose.decodeJwt(access_token).sub || ""}
+              {jose.decodeJwt(access_token).sub || ''}
             </CardDescription>
           </CardHeader>
           <CardContent className="gap-6">
@@ -133,12 +132,16 @@ export function MFAForm({ access_token }: { access_token: string }) {
                       autoComplete="one-time-code"
                       autoCapitalize="none"
                       returnKeyType="next"
-                      onSubmitEditing={handleSubmit(() => submit(), onValidationError)}
+                      onSubmitEditing={handleSubmit(
+                        () => submit(),
+                        onValidationError,
+                      )}
                       placeholder={t('mfa.placeholders.code')}
                       onBlur={onBlur}
                       onChangeText={(value) => {
                         onChange(value);
-                        if (value.length === 6) handleSubmit(() => submit(), onValidationError)();
+                        if (value.length === 6)
+                          handleSubmit(() => submit(), onValidationError)();
                       }}
                       value={String(value)}
                     />
@@ -150,7 +153,7 @@ export function MFAForm({ access_token }: { access_token: string }) {
                 control={control}
                 defaultValue={access_token}
                 name="token"
-                render={()=><></>}
+                render={() => <></>}
               ></Controller>
             </View>
           </CardContent>

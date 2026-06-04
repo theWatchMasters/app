@@ -1,10 +1,10 @@
 import { Button } from '@/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -20,7 +20,7 @@ import { AuthForm } from '../auth/AuthForm';
 import { useSession } from '../auth/SessionContext';
 import { handleError, handleValidationError } from '../forms/utils';
 import PaymentStub from './payment-stub';
-import { loadTask, useTask } from './TaskContext';
+import { useTask } from './TaskContext';
 
 const MAX_AMOUNT = 100;
 const LENGTH_OPTIONS = [
@@ -48,9 +48,6 @@ export function NewTaskForm() {
   const { task, setTask } = useTask();
   const [paymentOpen, setPaymentOpen] = React.useState(false);
 
-  React.useEffect(() => {
-    loadTask(session, { task, setTask });
-  }, [task, setTask, session]);
   const { control, handleSubmit } = useForm<INewTaskType>({
     defaultValues: {
       title: null,
@@ -67,9 +64,7 @@ export function NewTaskForm() {
     setPaymentOpen(true);
     setTask({
       task_active: true,
-      title: 'abc',
-      ends_at: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
-      id: '123',
+      ...(await response.json()).task,
     });
   };
 

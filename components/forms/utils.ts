@@ -53,8 +53,8 @@ export function handleValidationError<T extends FieldValues>(
         type: 'error',
         swipeable: true,
         autoHide: true,
-        text1: t('register.errors.heading'),
-        text2: t('register.errors.' + i + '-' + errors[i]?.type),
+        text1: t(`${translationKey}.errors.heading`),
+        text2: t(`${translationKey}.errors.` + i + '-' + errors[i]?.type),
       });
     }
   };

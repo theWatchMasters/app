@@ -73,7 +73,7 @@ i18n.use(initReactI18next).init({
             'password-maxLength': 'The password is too long',
             'password-required': 'The password is required',
             'password-invalid': 'The password is invalid',
-            heading: 'Login Error',
+            heading: 'Registration Error',
             network_failure: 'There was an error submitting the form',
           },
         },

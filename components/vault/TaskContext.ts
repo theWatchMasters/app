@@ -34,8 +34,11 @@ export const loadTask = async (
     return task.setTask({ task_active: false });
   }
   const data = await value.json();
+  if (data.task === null) {
+    return task.setTask({ task_active: false });
+  }
   task.setTask({
     task_active: true,
-    ...data,
+    ...data.task,
   });
 };

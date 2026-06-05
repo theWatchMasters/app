@@ -1,50 +1,57 @@
-# Welcome to your Expo app 👋
+# NowPower App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This is the official repository for the frontend of NowPower.
+
+NowPower helps you improve their productivity. Pledge money on your daily tasks. If you complete the task, receive your money back. If you don't, your money gets stored in a vault which you can earn back from by completing tasks. If money remains in your vault for over a month, it gets donated to charity.
+
+## Useful Links
+
+- The [backend](https://github.com/theWatchMasters/backend) repository: Contains the Express.js backend powering the app
+- The [specifications](https://github.com/theWatchMasters/specs) repository: Contains the specifications for the NowPower app
+- The root [GitHub Organisation](https://github.com/theWatchMasters)
 
 ## Get started
 
 1. Install dependencies
 
    ```bash
-   npm install
+   yarn
    ```
 
-2. Start the app
+2. Set up the [backend](https://github.com/theWatchMasters/backend) locally
+
+3. Copy `.env.example` to `.env` and set the `EXPO_PUBLIC_API_BASE_URL` to `http://localhost:3001/`
+
+   ```
+   EXPO_PUBLIC_API_BASE_URL=http://localhost:3001/
+   ```
+
+4. Download Android Studio (with an Android SDK). [Set up a device for debugging](https://developer.android.com/studio/debug/dev-options#enable)
+
+5. If the `ANDROID_HOME` environment variable isn't set, set it to the location of your SDK
+
+   **Windows:**
+
+   ```bat
+   echo %ANDROID_HOME%
+   rem If the above output isn't %ANDROID_HOME%, continue with step 6
+
+   set ANDROID_HOME=C:\path\to\Android\Sdk
+   rem An example path is %LOCALAPPDATA%\Android\Sdk
+   ```
+
+   **Linux:**
 
    ```bash
-   npx expo start
+   echo $ANDROID_HOME
+   # If the above output isn't empty, continue with step 6
+
+   export ANDROID_HOME=/path/to/Android/Sdk
+   # An example path is ~/Android/Sdk
    ```
 
-In the output, you'll find options to open the app in a
+6. Start the app
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+   ```bash
+   yarn expo run android
+   ```

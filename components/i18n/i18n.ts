@@ -96,6 +96,17 @@ i18n.use(initReactI18next).init({
             network_failure: 'There was an error submitting the form',
           },
         },
+        mfa_request: {
+          headings: {
+            text1: 'Do you want to sign up for 2FA?',
+            text2:
+              '2FA helps improve the security of your account by requiring a separate authentication code.\n<2>It is required for payment-related features</2>',
+          },
+          options: {
+            enroll: 'Enroll',
+            continue: 'Continue',
+          },
+        },
         vault_new: {
           headings: {
             text1: 'Enter task details',

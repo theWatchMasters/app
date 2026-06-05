@@ -11,31 +11,24 @@ import { API_BASE_URL } from '@/constants';
 import { router } from 'expo-router';
 import * as jose from 'jose';
 import * as React from 'react';
-import { Controller, FieldErrors, Form, useForm } from 'react-hook-form';
+import { Controller, Form, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
-import Toast from 'react-native-toast-message';
-import { useSession } from './auth/SessionContext';
+import { useSession } from '../auth/SessionContext';
+import { setAccessToken } from '../auth/utils';
+import { IUser } from '../types/responses';
+import { Text } from '../ui/text';
+import { handleError, handleValidationError } from './utils';
 
 interface IMFAType {
   token: string;
-  code: number;
-}
-
-interface User {
-  id: string;
-  avatar_id: string;
-  email: string;
+  code: string;
 }
 
 interface IMFAResponse {
   success: true;
-  user: User;
-}
-
-interface IErrorResponse {
-  success: false;
-  error: string;
+  user: IUser;
+  access_token: string;
 }
 
 export function MFAForm({ access_token }: { access_token: string }) {
@@ -44,51 +37,14 @@ export function MFAForm({ access_token }: { access_token: string }) {
   const { control, handleSubmit } = useForm<IMFAType>({
     defaultValues: {
       token: '',
-      code: 0,
+      code: '',
     },
   });
-
-  const onError = async ({
-    response,
-    error,
-  }:
-    | {
-        response: Response;
-        error?: undefined;
-      }
-    | {
-        response?: undefined;
-        error: unknown;
-      }) => {
-    let errorText: string;
-    if (error instanceof TypeError) errorText = t('mfa.errors.network_failure');
-    else if (response instanceof Response && response !== null)
-      errorText = t(((await response.json()) as IErrorResponse).error);
-    else errorText = t('mfa.generic_error');
-    Toast.show({
-      type: 'error',
-      swipeable: true,
-      autoHide: true,
-      text1: t('mfa.errors.heading'),
-      text2: errorText,
-    });
-  };
-
-  const onValidationError = (errors: FieldErrors<IMFAType>) => {
-    for (let i of Object.keys(errors) as (keyof typeof errors)[]) {
-      Toast.show({
-        type: 'error',
-        swipeable: true,
-        autoHide: true,
-        text1: t('mfa.errors.heading'),
-        text2: t('mfa.errors.' + i + '-' + errors[i]?.type),
-      });
-    }
-  };
 
   const onSuccess = async ({ response }: { response: Response }) => {
     const data = (await response.json()) as IMFAResponse;
     session.setSession({ signed_in: true, ...data.user });
+    await setAccessToken(data.access_token);
     router.navigate('/');
   };
 
@@ -96,20 +52,25 @@ export function MFAForm({ access_token }: { access_token: string }) {
     <Form
       className="gap-6"
       control={control}
-      action={API_BASE_URL + '/mfa'}
+      action={API_BASE_URL + 'mfa'}
       method="post"
       encType="application/json"
       onSuccess={onSuccess}
-      onError={onError}
+      onError={handleError('mfa', t)}
       render={({ submit }) => (
         <Card className="border-border/0 sm:border-border shadow-none sm:shadow-sm sm:shadow-black/5 w-full">
+          <View className="absolute -top-3 left-[30%] bg-secondary h-6 text-center right-[30%] rounded-full">
+            <Text className="text-center w-min-content">
+              {(jose.decodeJwt(access_token).email as string) || ''}
+            </Text>
+          </View>
+
           <CardHeader>
             <CardTitle className="text-center text-xl sm:text-left">
               {t('mfa.headings.text1')}
             </CardTitle>
             <CardDescription className="text-center sm:text-left">
               {t('mfa.headings.text2')}
-              {jose.decodeJwt(access_token).sub || ''}
             </CardDescription>
           </CardHeader>
           <CardContent className="gap-6">
@@ -134,16 +95,19 @@ export function MFAForm({ access_token }: { access_token: string }) {
                       returnKeyType="next"
                       onSubmitEditing={handleSubmit(
                         () => submit(),
-                        onValidationError,
+                        handleValidationError('mfa', t),
                       )}
                       placeholder={t('mfa.placeholders.code')}
                       onBlur={onBlur}
                       onChangeText={(value) => {
                         onChange(value);
                         if (value.length === 6)
-                          handleSubmit(() => submit(), onValidationError)();
+                          handleSubmit(
+                            () => submit(),
+                            handleValidationError('mfa', t),
+                          );
                       }}
-                      value={String(value)}
+                      value={value}
                     />
                   </View>
                 )}

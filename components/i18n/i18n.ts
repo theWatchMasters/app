@@ -54,7 +54,6 @@ i18n.use(initReactI18next).init({
             email: 'Email',
             password: 'Password',
           },
-          forgot_password: 'Forgot your password?',
           continue: 'Continue',
           sign_in: {
             '1': 'Already have an account?',
@@ -74,7 +73,7 @@ i18n.use(initReactI18next).init({
             'password-maxLength': 'The password is too long',
             'password-required': 'The password is required',
             'password-invalid': 'The password is invalid',
-            heading: 'Login Error',
+            heading: 'Registration Error',
             network_failure: 'There was an error submitting the form',
           },
         },
@@ -94,6 +93,26 @@ i18n.use(initReactI18next).init({
             'code-required': 'The code is required',
             'code-invalid': 'The code is invalid',
             heading: 'Login Error',
+            network_failure: 'There was an error submitting the form',
+          },
+        },
+        vault_new: {
+          headings: {
+            text1: 'Enter task details',
+            text2: 'Fill in the details of the task you want to track',
+            title: 'Title',
+            amount: 'Amount ($)',
+            length: 'Task Length',
+          },
+          continue: 'Continue',
+          placeholders: {
+            title: 'Title...',
+          },
+          errors: {
+            'title-maxLength': 'The title is too long',
+            'amount-required': 'The amount is required',
+            'length-required': 'The task length is required',
+            heading: 'Task Creation Error',
             network_failure: 'There was an error submitting the form',
           },
         },

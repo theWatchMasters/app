@@ -3,6 +3,7 @@ import {
   Session,
   SessionContext,
 } from '@/components/auth/SessionContext';
+import { Task, TaskContext } from '@/components/vault/TaskContext';
 import { NAV_THEME } from '@/lib/theme';
 import { ThemeProvider } from '@react-navigation/native';
 import { PortalHost } from '@rn-primitives/portal';
@@ -16,19 +17,29 @@ import '../global.css';
 
 export default function RootLayout() {
   const [session, setSession] = useState<Session>({ signed_in: false });
+  const [task, setTask] = useState<Task>({ task_active: false });
+  const [isLoading, setIsLoading] = useState(true);
   const { colorScheme } = useColorScheme();
   useEffect(() => {
-    loadSession({ session, setSession });
-  }, [session]);
+    (async () => {
+      loadSession({ session, setSession });
+      setIsLoading(false);
+    })();
+  }, []);
 
+  if (isLoading) {
+    return null;
+  }
   return (
     <ThemeProvider value={NAV_THEME[colorScheme ?? 'light']}>
-      <SessionContext value={{ session, setSession }}>
-        <StatusBar />
-        <Stack screenOptions={{ headerShown: false }} />
-        <PortalHost />
-        <Toast />
-      </SessionContext>
+      <TaskContext value={{ task, setTask }}>
+        <SessionContext value={{ session, setSession }}>
+          <StatusBar />
+          <Stack screenOptions={{ headerShown: false }} />
+          <PortalHost />
+          <Toast />
+        </SessionContext>
+      </TaskContext>
     </ThemeProvider>
   );
 }

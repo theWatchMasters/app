@@ -12,32 +12,25 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
 import { API_BASE_URL } from '@/constants';
-import { router } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import * as React from 'react';
-import { Controller, FieldErrors, Form, useForm } from 'react-hook-form';
+import { Controller, Form, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Pressable, type TextInput, View } from 'react-native';
-import Toast from 'react-native-toast-message';
-import { useSession } from './auth/SessionContext';
+import { useSession } from '../auth/SessionContext';
+import { setAccessToken } from '../auth/utils';
+import { IUser } from '../types/responses';
+import { handleError, handleValidationError } from './utils';
 
 interface IRegisterType {
   email: string;
   password: string;
 }
 
-interface User {
-  id: string;
-  avatar_id: string;
-  email: string;
-}
-
 interface IRegisterResponse {
   success: true;
-  user: User;
-}
-interface IErrorResponse {
-  success: false;
-  error: string;
+  user: IUser;
+  access_token: string;
 }
 
 export function SignUpForm() {
@@ -52,54 +45,14 @@ export function SignUpForm() {
     },
   });
 
-  const onError = async ({
-    response,
-    error,
-  }:
-    | {
-        response: Response;
-        error?: undefined;
-      }
-    | {
-        response?: undefined;
-        error: unknown;
-      }) => {
-    let errorText: string;
-    if (error instanceof TypeError)
-      errorText = t('register.errors.network_failure');
-    else if (response instanceof Response && response !== null)
-      errorText = t(((await response.json()) as IErrorResponse).error);
-    else errorText = t('error.generic_error');
-    Toast.show({
-      type: 'error',
-      swipeable: true,
-      autoHide: true,
-      text1: t('register.errors.heading'),
-      text2: errorText,
-    });
-  };
-
-  const onValidationError = (errors: FieldErrors<IRegisterType>) => {
-    for (let i of Object.keys(errors) as (keyof typeof errors)[]) {
-      Toast.show({
-        type: 'error',
-        swipeable: true,
-        autoHide: true,
-        text1: t('register.errors.heading'),
-        text2: t('register.errors.' + i + '-' + errors[i]?.type),
-      });
-    }
-  };
-
-  React.useEffect(() => {
-    if (session.session.signed_in) {
-      router.navigate('/');
-    }
-  }, [session]);
+  if (session.session.signed_in) {
+    return <Redirect href="/" />;
+  }
 
   const onSuccess = async ({ response }: { response: Response }) => {
     const data = (await response.json()) as IRegisterResponse;
     session.setSession({ signed_in: true, ...data.user });
+    await setAccessToken(data.access_token);
     router.navigate('/');
   };
 
@@ -111,11 +64,11 @@ export function SignUpForm() {
     <Form
       className="gap-6"
       control={control}
-      action={API_BASE_URL + '/register'}
+      action={API_BASE_URL + 'register'}
       method="post"
       encType="application/json"
       onSuccess={onSuccess}
-      onError={onError}
+      onError={handleError('register', t)}
       render={({ submit }) => (
         <Card className="border-border/0 sm:border-border shadow-none sm:shadow-sm sm:shadow-black/5 w-full">
           <CardHeader>
@@ -124,7 +77,6 @@ export function SignUpForm() {
             </CardTitle>
             <CardDescription className="text-center sm:text-left">
               {t('register.headings.text2')}
-              {}
             </CardDescription>
           </CardHeader>
           <CardContent className="gap-6">
@@ -173,18 +125,6 @@ export function SignUpForm() {
                       <Label htmlFor="password">
                         {t('register.headings.password')}
                       </Label>
-                      <Button
-                        variant="link"
-                        size="sm"
-                        className="web:h-fit ml-auto h-4 px-1 py-0 sm:h-4"
-                        onPress={() => {
-                          // TODO: Navigate to forgot password screen
-                        }}
-                      >
-                        <Text className="font-normal leading-4">
-                          {t('register.forgot_password')}
-                        </Text>
-                      </Button>
                     </View>
                     <Input
                       ref={passwordInputRef}
@@ -193,7 +133,7 @@ export function SignUpForm() {
                       returnKeyType="send"
                       onSubmitEditing={handleSubmit(
                         () => submit(),
-                        onValidationError,
+                        handleValidationError('register', t),
                       )}
                       placeholder={t('register.placeholders.password')}
                       onBlur={onBlur}
@@ -206,7 +146,10 @@ export function SignUpForm() {
               />
               <Button
                 className="w-full"
-                onPress={handleSubmit(() => submit(), onValidationError)}
+                onPress={handleSubmit(
+                  () => submit(),
+                  handleValidationError('register', t),
+                )}
               >
                 <Text>{t('register.continue')}</Text>
               </Button>
@@ -215,7 +158,7 @@ export function SignUpForm() {
               {t('register.sign_in.1')}{' '}
               <Pressable
                 onPress={() => {
-                  router.navigate('/login');
+                  router.replace('/login');
                 }}
               >
                 <Text className="text-sm underline underline-offset-4">

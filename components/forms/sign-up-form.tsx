@@ -55,7 +55,6 @@ export function SignUpForm() {
   }
 
   const onSuccess = async ({ response }: { response: Response }) => {
-    
     const data = (await response.json()) as IRegisterResponse;
     setUser({ signed_in: true, ...data.user });
     await setAccessToken(data.access_token);

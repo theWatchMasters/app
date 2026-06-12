@@ -36,7 +36,7 @@ export function MFAForm({ access_token }: { access_token: string }) {
   const session = useSession();
   const { control, handleSubmit } = useForm<IMFAType>({
     defaultValues: {
-      token: '',
+      token: access_token,
       code: '',
     },
   });
@@ -105,7 +105,7 @@ export function MFAForm({ access_token }: { access_token: string }) {
                           handleSubmit(
                             () => submit(),
                             handleValidationError('mfa', t),
-                          );
+                          )();
                       }}
                       value={value}
                     />
@@ -113,12 +113,6 @@ export function MFAForm({ access_token }: { access_token: string }) {
                 )}
                 name="code"
               />
-              <Controller
-                control={control}
-                defaultValue={access_token}
-                name="token"
-                render={() => <></>}
-              ></Controller>
             </View>
           </CardContent>
         </Card>

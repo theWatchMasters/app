@@ -176,12 +176,10 @@ export function SignInForm() {
               />
               <Button
                 className="w-full"
-                onPress={() =>
-                  handleSubmit(
-                    () => submit(),
-                    handleValidationError('login', t),
-                  )
-                }
+                onPress={handleSubmit(
+                  () => submit(),
+                  handleValidationError('login', t),
+                )}
               >
                 <Text>{t('login.continue')}</Text>
               </Button>

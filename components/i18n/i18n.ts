@@ -47,6 +47,14 @@ i18n.use(initReactI18next).init({
             network_failure: 'There was an error submitting the form',
           },
         },
+        email_verify: {
+          headings: {
+            text1: "Verify Email",
+            text2: "Check your inbox for an email from NowPower for a verification link. If the email isn't present, check your junk/spam folder. Otherwise, re-send the email with the button below",
+            resend: "Re-send Email in {{ seconds }}s",
+            "resend-enabled": "Re-send Email"
+          }
+        },
         register: {
           headings: {
             text1: 'Sign Up',

@@ -25,6 +25,11 @@ interface IRegisterType {
   password: string;
 }
 
+interface IRegisterResponse {
+  success: true;
+  access_token: string;
+}
+
 export function SignUpForm() {
   const passwordInputRef = React.useRef<TextInput>(null);
   const { t } = useTranslation();
@@ -42,7 +47,13 @@ export function SignUpForm() {
   }
 
   const onSuccess = async ({ response }: { response: Response }) => {
-    router.navigate('/email');
+    const data = (await response.json()) as IRegisterResponse;
+    router.navigate({
+      pathname: '/email',
+      params: {
+        token: data.access_token,
+      },
+    });
   };
 
   function onEmailSubmitEditing() {

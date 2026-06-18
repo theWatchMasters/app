@@ -1,6 +1,9 @@
+import { API_BASE_URL } from '@/constants';
 import { useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { View } from 'react-native';
+import Toast from 'react-native-toast-message';
+import { handleError } from './forms/utils';
 import { Button } from './ui/button';
 import {
   Card,
@@ -12,19 +15,48 @@ import {
 import { Separator } from './ui/separator';
 import { Text } from './ui/text';
 
-export function EmailVerify() {
+export function EmailVerify({ token }: { token: string }) {
   const { t } = useTranslation();
   const [seconds, setSeconds] = useState(60);
+  const [restartKey, setRestartKey] = useState<number>(0);
   useEffect(() => {
+    setSeconds(60);
     const handler = setInterval(() => {
-      setSeconds(seconds - 1);
-      if (seconds <= 0) {
-        setSeconds(0);
-        clearInterval(handler);
-      }
+      setSeconds((seconds) => {
+        if (seconds <= 1) {
+          clearInterval(handler);
+          return 0;
+        }
+        return seconds - 1;
+      });
     }, 1000);
     return () => clearInterval(handler);
-  });
+  }, [restartKey]);
+  const errorHandler = handleError('email_verify', t);
+  const onPress = async () => {
+    let response: Response | null;
+    try {
+      response = await fetch(API_BASE_URL + 'email/resend', {
+        method: 'POST',
+        body: JSON.stringify({ access_token: token }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    } catch (error) {
+      return errorHandler({ error });
+    }
+    if (!response.ok) {
+      return errorHandler({ response });
+    }
+    setRestartKey((prev) => prev + 1);
+    Toast.show({
+      type: 'success',
+      text1: t('email_verify.headings.success'),
+      text2: t('email_verify.headings.success-desc'),
+    });
+  };
+
   return (
     <Card>
       <CardHeader className="flex items-center">
@@ -34,7 +66,7 @@ export function EmailVerify() {
       </CardHeader>
       <CardContent className="flex items-center">
         <View className="flex flex-row items-center gap-5">
-          <Button disabled={seconds !== 0}>
+          <Button disabled={seconds !== 0} onPress={onPress}>
             <Text>
               {seconds !== 0 ? (
                 <Trans i18nKey="email_verify.headings.resend">

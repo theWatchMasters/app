@@ -49,11 +49,12 @@ i18n.use(initReactI18next).init({
         },
         email_verify: {
           headings: {
-            text1: "Verify Email",
-            text2: "Check your inbox for an email from NowPower for a verification link. If the email isn't present, check your junk/spam folder. Otherwise, re-send the email with the button below",
-            resend: "Re-send Email in {{ seconds }}s",
-            "resend-enabled": "Re-send Email"
-          }
+            text1: 'Verify Email',
+            text2:
+              "Check your inbox for an email from NowPower for a verification link. If the email isn't present, check your junk/spam folder. Otherwise, re-send the email with the button below",
+            resend: 'Re-send Email in {{ seconds }}s',
+            'resend-enabled': 'Re-send Email',
+          },
         },
         register: {
           headings: {

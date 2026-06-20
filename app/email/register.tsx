@@ -1,9 +1,14 @@
-import { useSession } from '@/components/auth/SessionContext';
-import { setAccessToken } from '@/components/auth/utils';
-import { IUser } from '@/components/types/responses';
+import MFARequest from '@/components/auth/2fa-request';
+import {
+  SessionContextType,
+  useSession,
+} from '@/components/auth/SessionContext';
 import { API_BASE_URL } from '@/constants';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
+
+import { setAccessToken } from '@/components/auth/utils';
+import { IUser } from '@/components/types/responses';
 interface IEmailVerifyResponse {
   success: true;
   user: IUser;
@@ -13,6 +18,11 @@ interface IEmailVerifyResponse {
 export default function RegisterEmailPage() {
   const { id } = useLocalSearchParams();
   const session = useSession();
+
+  const [mfaFormOpen, setMFAFormOpen] = React.useState(false);
+  const [user, setUser] = React.useState<SessionContextType['session']>({
+    signed_in: false,
+  });
   useEffect(() => {
     fetch(API_BASE_URL + 'email', {
       method: 'POST',
@@ -26,12 +36,14 @@ export default function RegisterEmailPage() {
         if (data.success) {
           session.setSession({ signed_in: true, ...data.user });
           await setAccessToken(data.access_token);
+          setUser({ signed_in: true, ...data.user });
+          setMFAFormOpen(true);
         }
-        router.navigate('/');
       })
       .catch((err) => {
         console.error(err);
         router.navigate('/');
       });
   }, [id]);
+  return <MFARequest open={mfaFormOpen} setOpen={setMFAFormOpen} user={user} />;
 }

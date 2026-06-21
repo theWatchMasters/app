@@ -1,46 +1,104 @@
-import { View } from 'react-native';
+import { API_BASE_URL } from '@/constants';
+import { formatTime } from '@/lib/utils';
+import { Link } from 'expo-router';
+import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ScrollView } from 'react-native';
+import { authFetch, useSession } from '../auth/SessionContext';
+import { handleError } from '../forms/utils';
 import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Text } from '../ui/text';
 
-const FAKE_HISTORY = [
-  {
-    length: '15m',
-    amount: '$0.50',
-    ends_at: new Date(2026, 0, 1, 1, 12, 15).toISOString(),
-    title: 'Study for CS2030S midterms',
-    successful: true,
-  },
-  {
-    length: '1h',
-    amount: '$2.00',
-    ends_at: new Date(2026, 0, 1, 1, 0, 0).toISOString(),
-    title: '',
-    successful: false,
-  },
-];
+type HistoryItem = {
+  length: number;
+  amount: string;
+  ends_at: string;
+  id: string;
+  title: string;
+  finished: boolean;
+  completed: boolean;
+  deductible_amount: string;
+};
+
 export default function VaultHistory() {
+  const [page, setPage] = React.useState(0);
+  const [numPages, setNumPages] = React.useState(0);
+  const [loading, setLoading] = React.useState(true);
+
+  const [pageData, setPageData] = React.useState<HistoryItem[]>([]);
+  const session = useSession();
+  const { t } = useTranslation();
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await authFetch(
+          session,
+          API_BASE_URL + `vault/list?page=${page}`,
+        );
+        if (!response) {
+          return;
+        }
+        if (!response.ok) {
+          return handleError('history', t)({ response });
+        }
+        const data = await response.json();
+        setPageData(data.tasks);
+        setNumPages(data.pages);
+      } catch (error) {
+        return handleError('history', t)({ error });
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [page]);
+
   return (
-    <View className="w-[80%] flex flex-col gap-2">
-      {FAKE_HISTORY.map((item, index) => (
-        <Card
-          key={index}
-          className="border-gray w-full"
-          style={
-            item.successful
-              ? { borderColor: 'green', borderWidth: 2 }
-              : { borderColor: 'red', borderWidth: 2 }
-          }
-        >
+    <ScrollView className="w-[80%] flex flex-col gap-2 h-full">
+      <Link href="/" className="text-muted-foreground">
+        &larr;Back
+      </Link>
+      {!loading && numPages === 0 && (
+        <Card className="border-gray w-full">
           <CardHeader>
-            <CardTitle>
-              {item.amount} for {item.length}
-            </CardTitle>
-            <CardDescription>
-              {item.title || 'No title'} -{' '}
-              {new Date(item.ends_at).toLocaleString()}
-            </CardDescription>
+            <CardTitle>{t('history.no_history')}</CardTitle>
           </CardHeader>
         </Card>
-      ))}
-    </View>
+      )}
+      {!loading &&
+        numPages &&
+        pageData.map((item, index) => (
+          <Card
+            key={index}
+            className="border-gray w-full"
+            style={
+              !item.completed
+                ? { borderColor: 'blue', borderWidth: 3 }
+                : item.finished
+                  ? { borderColor: 'green', borderWidth: 2 }
+                  : { borderColor: 'red', borderWidth: 2 }
+            }
+          >
+            <CardHeader>
+              <CardTitle>
+                {item.amount === item.deductible_amount || item.finished ? (
+                  (+item.amount).toFixed(2)
+                ) : (
+                  <>
+                    <Text className="text-muted-foreground line-through">
+                      {(+item.amount).toFixed(2)}
+                    </Text>{' '}
+                    {(+item.deductible_amount).toFixed(2)}
+                  </>
+                )}{' '}
+                for {formatTime(item.length)}
+              </CardTitle>
+              <CardDescription>
+                {item.title || 'No title'} -{' '}
+                {new Date(item.ends_at).toLocaleString()}
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        ))}
+    </ScrollView>
   );
 }

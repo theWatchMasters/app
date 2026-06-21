@@ -1,9 +1,11 @@
 import { useSession } from '@/components/auth/SessionContext';
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import VaultHistory from '@/components/vault/history';
+import { Text } from '@/components/ui/text';
 import { loadTask, useTask } from '@/components/vault/TaskContext';
 import Vault from '@/components/vault/vault';
-import { Redirect } from 'expo-router';
+import { Redirect, router } from 'expo-router';
+import { HistoryIcon } from 'lucide-react-native';
 import { useEffect } from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
@@ -21,8 +23,17 @@ export default function Index() {
     <SafeAreaProvider>
       <SafeAreaView className="items-center justify-center">
         <Vault />
-        <Separator className="w-[80%] m-4" />
-        <VaultHistory />
+        <Separator className="my-4" />
+        <Button
+          onPress={() => {
+            router.navigate('/vault/history');
+          }}
+        >
+          <Text className="flex flex-col">
+            <HistoryIcon className="mt-3" />
+            History
+          </Text>
+        </Button>
       </SafeAreaView>
     </SafeAreaProvider>
   );

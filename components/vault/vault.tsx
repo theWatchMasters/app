@@ -37,7 +37,7 @@ export default function Vault() {
             body: JSON.stringify({
               id: task.id,
             }),
-          });
+          }).then(session.reloadSession);
           setTask({ task_active: false });
           clearInterval(interval);
         }
@@ -57,6 +57,7 @@ export default function Vault() {
       }),
     });
     setTask({ task_active: false });
+    session.reloadSession();
   };
   return (
     <Pressable onPress={() => router.navigate('/vault/new')}>
@@ -74,7 +75,12 @@ export default function Vault() {
         }
       >
         <CardHeader className="items-center">
-          <CardTitle className="text-5xl">$0.00</CardTitle>
+          <CardTitle className="text-5xl">
+            $
+            {session.session.signed_in
+              ? session.session.vault_amount.toFixed(2)
+              : '0.00'}
+          </CardTitle>
           <CardDescription className="text-xl">
             {task.task_active ? timer : 'Click to start a new task'}
           </CardDescription>

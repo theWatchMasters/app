@@ -14,11 +14,13 @@ export type Session =
 export type SessionContextType = {
   session: Session;
   setSession: (arg0: Session) => void;
+  reloadSession: () => void;
 };
 
 export const SessionContext = createContext<SessionContextType>({
   session: { signed_in: false },
   setSession: () => {},
+  reloadSession: () => {},
 });
 
 export const useSession = () => useContext(SessionContext);
@@ -33,7 +35,7 @@ export const loadSession = async (session: SessionContextType) => {
   const data = await value.json();
   session.setSession({
     signed_in: true,
-    ...data,
+    ...data.user,
   });
 };
 

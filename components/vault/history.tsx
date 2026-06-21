@@ -7,6 +7,8 @@ import { ScrollView } from 'react-native';
 import { authFetch, useSession } from '../auth/SessionContext';
 import { handleError } from '../forms/utils';
 import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import PageBar from '../ui/pagebar';
+import { Skeleton } from '../ui/skeleton';
 import { Text } from '../ui/text';
 
 type HistoryItem = {
@@ -53,10 +55,26 @@ export default function VaultHistory() {
   }, [page]);
 
   return (
-    <ScrollView className="w-[80%] flex flex-col gap-2 h-full">
+    <ScrollView
+      className="w-[80%] flex flex-col gap-2 h-full"
+      contentContainerStyle={{ alignItems: 'center' }}
+    >
       <Link href="/" className="text-muted-foreground">
         &larr;Back
       </Link>
+      {loading &&
+        new Array(10).fill(0).map((_, index) => (
+          <Card key={index} className="border-gray w-full my-2">
+            <CardHeader>
+              <CardTitle>
+                <Skeleton className="h-4 w-[100px]" />
+              </CardTitle>
+              <CardDescription>
+                <Skeleton className="h-4 w-[200px]" />
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        ))}
       {!loading && numPages === 0 && (
         <Card className="border-gray w-full">
           <CardHeader>
@@ -64,41 +82,44 @@ export default function VaultHistory() {
           </CardHeader>
         </Card>
       )}
-      {!loading &&
-        numPages &&
-        pageData.map((item, index) => (
-          <Card
-            key={index}
-            className="border-gray w-full"
-            style={
-              !item.completed
-                ? { borderColor: 'blue', borderWidth: 3 }
-                : item.finished
-                  ? { borderColor: 'green', borderWidth: 2 }
-                  : { borderColor: 'red', borderWidth: 2 }
-            }
-          >
-            <CardHeader>
-              <CardTitle>
-                {item.amount === item.deductible_amount || item.finished ? (
-                  (+item.amount).toFixed(2)
-                ) : (
-                  <>
-                    <Text className="text-muted-foreground line-through">
-                      {(+item.amount).toFixed(2)}
-                    </Text>{' '}
-                    {(+item.deductible_amount).toFixed(2)}
-                  </>
-                )}{' '}
-                for {formatTime(item.length)}
-              </CardTitle>
-              <CardDescription>
-                {item.title || 'No title'} -{' '}
-                {new Date(item.ends_at).toLocaleString()}
-              </CardDescription>
-            </CardHeader>
-          </Card>
-        ))}
+      {!loading && numPages && (
+        <>
+          <PageBar value={page} onChange={setPage} maxValue={numPages} />
+          {pageData.map((item, index) => (
+            <Card
+              key={index}
+              className="border-gray w-full my-2"
+              style={
+                !item.completed
+                  ? { borderColor: 'blue', borderWidth: 3 }
+                  : item.finished
+                    ? { borderColor: 'green', borderWidth: 2 }
+                    : { borderColor: 'red', borderWidth: 2 }
+              }
+            >
+              <CardHeader>
+                <CardTitle>
+                  {item.amount === item.deductible_amount || item.finished ? (
+                    (+item.amount).toFixed(2)
+                  ) : (
+                    <>
+                      <Text className="text-muted-foreground line-through">
+                        {(+item.amount).toFixed(2)}
+                      </Text>{' '}
+                      {(+item.deductible_amount).toFixed(2)}
+                    </>
+                  )}{' '}
+                  for {formatTime(item.length)}
+                </CardTitle>
+                <CardDescription>
+                  {item.title || 'No title'} -{' '}
+                  {new Date(item.ends_at).toLocaleString()}
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          ))}
+        </>
+      )}
     </ScrollView>
   );
 }

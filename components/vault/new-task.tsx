@@ -62,6 +62,7 @@ export function NewTaskForm() {
 
   const onSuccess = async ({ response }: { response: Response }) => {
     setPaymentOpen(true);
+    session.reloadSession();
     setTask({
       task_active: true,
       ...(await response.json()).task,

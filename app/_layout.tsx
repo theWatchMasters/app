@@ -18,14 +18,20 @@ import '../global.css';
 export default function RootLayout() {
   const [session, setSession] = useState<Session>({ signed_in: false });
   const [task, setTask] = useState<Task>({ task_active: false });
+  const [shouldReloadSession, setShouldReloadSession] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const { colorScheme } = useColorScheme();
   useEffect(() => {
     (async () => {
-      loadSession({ session, setSession });
+      shouldReloadSession && setShouldReloadSession(false);
+      loadSession({
+        session,
+        setSession,
+        reloadSession: () => setShouldReloadSession(true),
+      });
       setIsLoading(false);
     })();
-  }, []);
+  }, [shouldReloadSession]);
 
   if (isLoading) {
     return null;
@@ -33,11 +39,17 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={NAV_THEME[colorScheme ?? 'light']}>
       <TaskContext value={{ task, setTask }}>
-        <SessionContext value={{ session, setSession }}>
+        <SessionContext
+          value={{
+            session,
+            setSession,
+            reloadSession: () => setShouldReloadSession(true),
+          }}
+        >
           <StatusBar />
           <Stack screenOptions={{ headerShown: false }} />
-          <PortalHost />
           <Toast />
+          <PortalHost />
         </SessionContext>
       </TaskContext>
     </ThemeProvider>

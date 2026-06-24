@@ -47,7 +47,7 @@ export default function Vault() {
   }, [task, setTimer, session, setTask]);
   const onSubmit = async () => {
     if (!task.task_active) return;
-    await authFetch(session, API_BASE_URL + 'vault/incomplete', {
+    await authFetch(session, API_BASE_URL + 'vault/complete', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

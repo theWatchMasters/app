@@ -48,8 +48,8 @@ export default function RootLayout() {
         >
           <StatusBar />
           <Stack screenOptions={{ headerShown: false }} />
-          <PortalHost />
           <Toast />
+          <PortalHost />
         </SessionContext>
       </TaskContext>
     </ThemeProvider>

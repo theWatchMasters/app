@@ -1,13 +1,25 @@
 import { clsx, type ClassValue } from 'clsx';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import { twMerge } from 'tailwind-merge';
+
+dayjs.extend(relativeTime);
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 export function formatTime(seconds: number) {
-  const hours = Math.floor(seconds / 3600 / 1000)
-  const minutes = Math.floor((seconds % 3600000) / 60)
-  const secs = Math.floor(seconds % 60000)
-  return ((hours ? `${hours}h ` : '') + (minutes ? `${minutes}m ` : '') + (secs ? `${secs}s` : '')).trim();
+  const hours = Math.floor(seconds / 3600 / 1000);
+  const minutes = Math.floor((seconds % 3600000) / 60);
+  const secs = Math.floor(seconds % 60000);
+  return (
+    (hours ? `${hours}h ` : '') +
+    (minutes ? `${minutes}m ` : '') +
+    (secs ? `${secs}s` : '')
+  ).trim();
+}
+
+export function formatRelativeTime(date: string) {
+  return dayjs(date).fromNow();
 }

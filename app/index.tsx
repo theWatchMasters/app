@@ -2,12 +2,14 @@ import { useSession } from '@/components/auth/SessionContext';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
+import VaultExpiry from '@/components/vault/expiry';
 import { loadTask, useTask } from '@/components/vault/TaskContext';
 import Vault from '@/components/vault/vault';
 import { Redirect, router } from 'expo-router';
 import { HistoryIcon } from 'lucide-react-native';
 import { useEffect } from 'react';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { ScrollView } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export default function Index() {
   const session = useSession();
@@ -21,7 +23,10 @@ export default function Index() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView className="items-center justify-center">
+      <ScrollView
+        contentContainerStyle={{ alignItems: 'center' }}
+        className="w-full h-full p-5"
+      >
         <Vault />
         <Separator className="my-4" />
         <Button
@@ -34,7 +39,8 @@ export default function Index() {
             History
           </Text>
         </Button>
-      </SafeAreaView>
+        <VaultExpiry />
+      </ScrollView>
     </SafeAreaProvider>
   );
 }

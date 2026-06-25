@@ -33,7 +33,7 @@ export const loadSession = async (session: SessionContextType) => {
   const data = await value.json();
   session.setSession({
     signed_in: true,
-    ...data,
+    ...data.user,
   });
 };
 

@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { API_BASE_URL } from '@/constants';
 import { router } from 'expo-router';
 import * as jose from 'jose';
-import * as React from 'react';
+import { useColorScheme } from 'nativewind';
 import { Controller, Form, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
@@ -34,6 +34,7 @@ interface IMFAResponse {
 export function MFAForm({ access_token }: { access_token: string }) {
   const { t } = useTranslation();
   const session = useSession();
+  const { setColorScheme } = useColorScheme();
   const { control, handleSubmit } = useForm<IMFAType>({
     defaultValues: {
       token: access_token,
@@ -44,6 +45,9 @@ export function MFAForm({ access_token }: { access_token: string }) {
   const onSuccess = async ({ response }: { response: Response }) => {
     const data = (await response.json()) as IMFAResponse;
     session.setSession({ signed_in: true, ...data.user });
+    setColorScheme(
+      data.user.theme.toLowerCase() as 'dark' | 'light' | 'system',
+    );
     await setAccessToken(data.access_token);
     router.navigate('/');
   };

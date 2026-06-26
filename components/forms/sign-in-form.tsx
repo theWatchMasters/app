@@ -13,6 +13,7 @@ import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
 import { API_BASE_URL } from '@/constants';
 import { Redirect, router } from 'expo-router';
+import { useColorScheme } from 'nativewind';
 import * as React from 'react';
 import { Controller, Form, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -44,7 +45,7 @@ export function SignInForm() {
   const passwordInputRef = React.useRef<TextInput>(null);
   const { t } = useTranslation();
   const session = useSession();
-
+  const { setColorScheme } = useColorScheme();
   const { control, handleSubmit } = useForm<ILoginType>({
     defaultValues: {
       email: '',
@@ -67,6 +68,9 @@ export function SignInForm() {
       });
     } else {
       session.setSession({ signed_in: true, ...data.user });
+      setColorScheme(
+        data.user.theme.toLowerCase() as 'dark' | 'light' | 'system',
+      );
       await setAccessToken(data.access_token);
       if (router.canGoBack()) {
         router.back();

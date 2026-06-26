@@ -23,7 +23,10 @@ export const SessionContext = createContext<SessionContextType>({
 
 export const useSession = () => useContext(SessionContext);
 
-export const loadSession = async (session: SessionContextType) => {
+export const loadSession = async (
+  session: SessionContextType,
+  setColorScheme: (arg0: 'dark' | 'light' | 'system') => void,
+) => {
   const value = await authFetch(session, API_BASE_URL + 'me');
 
   if (value === null || value.status === 401) {
@@ -33,8 +36,9 @@ export const loadSession = async (session: SessionContextType) => {
   const data = await value.json();
   session.setSession({
     signed_in: true,
-    ...data,
+    ...data.user,
   });
+  setColorScheme(data.user.theme.toLowerCase());
 };
 
 /**

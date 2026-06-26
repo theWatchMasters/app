@@ -64,6 +64,15 @@ i18n.use(initReactI18next).init({
             network_failure: 'There was an error submitting the form',
           },
         },
+        email_verify: {
+          headings: {
+            text1: 'Verify Email',
+            text2:
+              "Check your inbox for an email from NowPower for a verification link. If the email isn't present, check your junk/spam folder. Otherwise, re-send the email with the button below",
+            resend: 'Re-send Email in {{ seconds }}s',
+            'resend-enabled': 'Re-send Email',
+          },
+        },
         register: {
           headings: {
             text1: 'Sign Up',
@@ -154,6 +163,37 @@ i18n.use(initReactI18next).init({
             'code-invalid': 'The code is invalid',
             heading: '2FA Enrollment Error',
             network_failure: 'There was an error submitting the form',
+          },
+        },
+        settings: {
+          errors: {
+            heading: 'Settings Error',
+            network_failure: 'There was an error submitting the form',
+          },
+          headings: {
+            text1: 'Settings',
+            personalInfo: 'Personal Information',
+            dataexport: 'Download your Data',
+            email: 'Email: ',
+            theme: 'Theme: ',
+          },
+          themes: {
+            light: 'Light',
+            dark: 'Dark',
+            system: 'System',
+          },
+        },
+        export: {
+          headings: {
+            text1: 'Export Started',
+            text2:
+              'Your data is being downloaded. Please check your email for the file.',
+          },
+          errors: {
+            heading: 'Export Error',
+            network_failure: 'There was an error submitting the form',
+            too_many_requests:
+              'You have requested an export too many times. Please wait 7 days before trying again.',
           },
         },
         vault_new: {

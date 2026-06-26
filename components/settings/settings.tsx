@@ -56,9 +56,8 @@ export default function Settings() {
         return handleError('export', t)({ response });
       }
       Toast.show({
-        text1: 'Export Started',
-        text2:
-          'Your data is being downloaded. Please check your email for the file.',
+        text1: t('export.headings.text1'),
+        text2: t('export.headings.text2'),
         type: 'success',
       });
     } catch (error) {
@@ -68,15 +67,17 @@ export default function Settings() {
   return (
     <View className="flex flex-col items-center gap-4">
       <Text variant={'h1'} className="text-lg font-bold">
-        Settings
+        {t('settings.headings.text1')}
       </Text>
       <Card className="p-4">
         <CardHeader>
-          <CardTitle className="text-center">Personal Information</CardTitle>
+          <CardTitle className="text-center">
+            {t('settings.headings.personalInfo')}
+          </CardTitle>
         </CardHeader>
         <View className="flex flex-col justify-center items-center">
           <View className="flex flex-row items-center">
-            <Text className="font-bold">Email: </Text>
+            <Text className="font-bold">{t('settings.headings.email')}</Text>
             <Input
               value={session.session.email}
               editable={false}
@@ -84,7 +85,7 @@ export default function Settings() {
             />
           </View>
           <View className="flex flex-row items-center">
-            <Text className="font-bold">Theme: </Text>
+            <Text className="font-bold">{t('settings.headings.theme')}</Text>
             <Tabs
               value={theme}
               onValueChange={onThemeUpdate}
@@ -92,13 +93,13 @@ export default function Settings() {
             >
               <TabsList>
                 <TabsTrigger value="DARK">
-                  <Text>Dark</Text>
+                  <Text>{t('settings.themes.dark')}</Text>
                 </TabsTrigger>
                 <TabsTrigger value="LIGHT">
-                  <Text>Light</Text>
+                  <Text>{t('settings.themes.light')}</Text>
                 </TabsTrigger>
                 <TabsTrigger value="SYSTEM">
-                  <Text>System</Text>
+                  <Text>{t('settings.themes.system')}</Text>
                 </TabsTrigger>
               </TabsList>
             </Tabs>
@@ -107,7 +108,9 @@ export default function Settings() {
       </Card>
       <Button variant="secondary" onPress={onDownloadData}>
         <Icon as={Download} />
-        <Text className="text-lg font-bold">Download Data</Text>
+        <Text className="text-lg font-bold">
+          {t('settings.headings.dataexport')}
+        </Text>
       </Button>
     </View>
   );

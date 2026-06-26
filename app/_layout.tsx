@@ -18,10 +18,10 @@ export default function RootLayout() {
   const [session, setSession] = useState<Session>({ signed_in: false });
   const [task, setTask] = useState<Task>({ task_active: false });
   const [isLoading, setIsLoading] = useState(false);
-  const { colorScheme } = useColorScheme();
+  const { colorScheme, setColorScheme } = useColorScheme();
   useEffect(() => {
     (async () => {
-      await loadSession({ session, setSession });
+      await loadSession({ session, setSession }, setColorScheme);
       setIsLoading(false);
     })();
   }, []);

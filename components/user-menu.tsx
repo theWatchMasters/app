@@ -9,6 +9,7 @@ import {
 import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
 import type { TriggerRef } from '@rn-primitives/popover';
+import { router } from 'expo-router';
 import { LogOutIcon, SettingsIcon } from 'lucide-react-native';
 import * as React from 'react';
 import { View } from 'react-native';
@@ -48,7 +49,7 @@ export function UserMenu() {
               variant="outline"
               size="sm"
               onPress={() => {
-                // TODO: Navigate to account settings screen
+                router.push('/settings');
               }}
             >
               <Icon as={SettingsIcon} className="size-4" />
@@ -65,21 +66,6 @@ export function UserMenu() {
             </Button>
           </View>
         </View>
-        {/* <Button
-          variant="ghost"
-          size="lg"
-          className="h-16 justify-start gap-3 rounded-none rounded-b-md px-3 sm:h-14"
-          onPress={() => {
-            // TODO: Navigate to add account screen
-          }}
-        >
-          <View className="size-10 items-center justify-center">
-            <View className="border-border bg-muted/50 size-7 items-center justify-center rounded-full border border-dashed">
-              <Icon as={PlusIcon} className="size-5" />
-            </View>
-          </View>
-          <Text>Add account</Text>
-        </Button> */}
       </PopoverContent>
     </Popover>
   );

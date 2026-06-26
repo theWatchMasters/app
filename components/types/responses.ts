@@ -8,4 +8,5 @@ export interface IUser {
   id: string;
   avatar_id: string;
   email: string;
+  theme: string;
 }

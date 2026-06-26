@@ -20,7 +20,6 @@ export function EmailVerify({ token }: { token: string }) {
   const [seconds, setSeconds] = useState(60);
   const [restartKey, setRestartKey] = useState<number>(0);
   useEffect(() => {
-    setSeconds(60);
     const handler = setInterval(() => {
       setSeconds((seconds) => {
         if (seconds <= 1) {
@@ -49,6 +48,7 @@ export function EmailVerify({ token }: { token: string }) {
     if (!response.ok) {
       return errorHandler({ response });
     }
+    setSeconds(60);
     setRestartKey((prev) => prev + 1);
     Toast.show({
       type: 'success',

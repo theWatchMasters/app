@@ -19,8 +19,6 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, type TextInput, View } from 'react-native';
 import MFARequest from '../auth/2fa-request';
 import { SessionContextType, useSession } from '../auth/SessionContext';
-import { setAccessToken } from '../auth/utils';
-import { IUser } from '../types/responses';
 import { handleError, handleValidationError } from './utils';
 
 interface IRegisterType {
@@ -30,7 +28,6 @@ interface IRegisterType {
 
 interface IRegisterResponse {
   success: true;
-  user: IUser;
   access_token: string;
 }
 
@@ -38,11 +35,11 @@ export function SignUpForm() {
   const passwordInputRef = React.useRef<TextInput>(null);
   const { t } = useTranslation();
   const session = useSession();
-
   const [mfaFormOpen, setMFAFormOpen] = React.useState(false);
   const [user, setUser] = React.useState<SessionContextType['session']>({
     signed_in: false,
   });
+
   const { control, handleSubmit } = useForm<IRegisterType>({
     defaultValues: {
       email: '',
@@ -56,9 +53,12 @@ export function SignUpForm() {
 
   const onSuccess = async ({ response }: { response: Response }) => {
     const data = (await response.json()) as IRegisterResponse;
-    setUser({ signed_in: true, ...data.user });
-    await setAccessToken(data.access_token);
-    setMFAFormOpen(true);
+    router.navigate({
+      pathname: '/email',
+      params: {
+        token: data.access_token,
+      },
+    });
   };
 
   function onEmailSubmitEditing() {
@@ -176,7 +176,10 @@ export function SignUpForm() {
               <Text className="text-muted-foreground px-4 text-sm">or</Text>
               <Separator className="flex-1" />
             </View>
-            <SocialConnections />
+            <SocialConnections
+              setUser={setUser}
+              setMFAFormOpen={setMFAFormOpen}
+            />
             <MFARequest
               open={mfaFormOpen}
               setOpen={setMFAFormOpen}

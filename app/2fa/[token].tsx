@@ -2,7 +2,6 @@ import { useSession } from '@/components/auth/SessionContext';
 import { MFAForm } from '@/components/forms/2fa-form';
 import { Redirect, useLocalSearchParams } from 'expo-router';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-
 export default function MFAPage() {
   const session = useSession();
   const { token } = useLocalSearchParams();

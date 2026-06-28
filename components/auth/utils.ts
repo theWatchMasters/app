@@ -8,10 +8,14 @@ export async function setAccessToken(token: string) {
 }
 
 export async function getAccessToken() {
-  const credentials = await Keychain.getGenericPassword({
-    service: 'access_token',
-  });
-  return (credentials || null)?.password;
+  try {
+    const credentials = await Keychain.getGenericPassword({
+      service: 'access_token',
+    });
+    return (credentials || null)?.password;
+  } catch (error) {
+    return null;
+  }
 }
 
 export async function clearAccessToken() {

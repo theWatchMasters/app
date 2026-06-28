@@ -16,7 +16,6 @@ export default function Index() {
   if (!session.session.signed_in) {
     return <Redirect href="/login" />;
   }
-
   return (
     <SafeAreaProvider>
       <SafeAreaView className="items-center justify-center">

@@ -17,7 +17,8 @@ import * as React from 'react';
 import { Controller, Form, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Pressable, type TextInput, View } from 'react-native';
-import { useSession } from '../auth/SessionContext';
+import MFARequest from '../auth/2fa-request';
+import { SessionContextType, useSession } from '../auth/SessionContext';
 import { handleError, handleValidationError } from './utils';
 
 interface IRegisterType {
@@ -34,6 +35,10 @@ export function SignUpForm() {
   const passwordInputRef = React.useRef<TextInput>(null);
   const { t } = useTranslation();
   const session = useSession();
+  const [mfaFormOpen, setMFAFormOpen] = React.useState(false);
+  const [user, setUser] = React.useState<SessionContextType['session']>({
+    signed_in: false,
+  });
 
   const { control, handleSubmit } = useForm<IRegisterType>({
     defaultValues: {
@@ -171,7 +176,15 @@ export function SignUpForm() {
               <Text className="text-muted-foreground px-4 text-sm">or</Text>
               <Separator className="flex-1" />
             </View>
-            <SocialConnections />
+            <SocialConnections
+              setUser={setUser}
+              setMFAFormOpen={setMFAFormOpen}
+            />
+            <MFARequest
+              open={mfaFormOpen}
+              setOpen={setMFAFormOpen}
+              user={user}
+            />
           </CardContent>
         </Card>
       )}

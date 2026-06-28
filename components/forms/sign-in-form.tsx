@@ -201,7 +201,7 @@ export function SignInForm() {
               <Text className="text-muted-foreground px-4 text-sm">or</Text>
               <Separator className="flex-1" />
             </View>
-            <SocialConnections />
+            <SocialConnections setUser={() => {}} setMFAFormOpen={() => {}} />
           </CardContent>
         </Card>
       )}

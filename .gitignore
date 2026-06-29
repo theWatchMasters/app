@@ -45,3 +45,5 @@ app-example
 
 # yarn berry files
 .yarn/*
+
+release.keystore

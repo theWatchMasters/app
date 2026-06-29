@@ -7,6 +7,7 @@ import { Task, TaskContext } from '@/components/vault/TaskContext';
 import { NAV_THEME } from '@/lib/theme';
 import { ThemeProvider } from '@react-navigation/native';
 import { PortalHost } from '@rn-primitives/portal';
+import { StripeProvider } from '@stripe/stripe-react-native';
 import { Stack } from 'expo-router';
 import { useColorScheme } from 'nativewind';
 import { useEffect, useState } from 'react';
@@ -31,15 +32,23 @@ export default function RootLayout() {
     return null;
   }
   return (
-    <ThemeProvider value={NAV_THEME[colorScheme ?? 'light']}>
-      <TaskContext value={{ task, setTask }}>
-        <SessionContext value={{ session, setSession }}>
-          <StatusBar />
-          <Stack screenOptions={{ headerShown: false }} />
-          <PortalHost />
-          <Toast />
-        </SessionContext>
-      </TaskContext>
-    </ThemeProvider>
+    <StripeProvider publishableKey={process.env.EXPO_PUBLIC_STRIPE_PK ?? ''}>
+      <ThemeProvider value={NAV_THEME[colorScheme ?? 'light']}>
+        <TaskContext
+          value={{
+            task,
+            setTask,
+            reloadTask: () => loadSession({ session, setSession }),
+          }}
+        >
+          <SessionContext value={{ session, setSession }}>
+            <StatusBar />
+            <Stack screenOptions={{ headerShown: false }} />
+            <PortalHost />
+            <Toast />
+          </SessionContext>
+        </TaskContext>
+      </ThemeProvider>
+    </StripeProvider>
   );
 }

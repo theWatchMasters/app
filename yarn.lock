@@ -3590,6 +3590,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@stripe/stripe-react-native@npm:0.50.3":
+  version: 0.50.3
+  resolution: "@stripe/stripe-react-native@npm:0.50.3"
+  peerDependencies:
+    expo: ">=46.0.9"
+    react: "*"
+    react-native: "*"
+  peerDependenciesMeta:
+    expo:
+      optional: true
+  checksum: 10c0/1269950f469f2acf2c389cb26f0465f9889fb0f4c874220cff32979e1ebfc8ca390f12150945217cdfb04976ee536951dffea4ef227166337aa2d7a15fa7bbc3
+  languageName: node
+  linkType: hard
+
 "@tootallnate/once@npm:2":
   version: 2.0.0
   resolution: "@tootallnate/once@npm:2.0.0"
@@ -10181,6 +10195,7 @@ __metadata:
     "@rn-primitives/portal": "npm:^1.4.0"
     "@rn-primitives/separator": "npm:^1.4.0"
     "@rn-primitives/slot": "npm:^1.4.0"
+    "@stripe/stripe-react-native": "npm:0.50.3"
     "@types/babel__core": "npm:^7"
     "@types/jest": "npm:29.5.14"
     "@types/react": "npm:~19.1.0"

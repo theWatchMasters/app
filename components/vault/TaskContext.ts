@@ -11,16 +11,21 @@ export type Task =
       ends_at: string;
       title: string;
       id: string;
+      payment_intent: string;
+      payment_intent_client_secret: string;
+      payment_status: string;
     };
 
 export type TaskContextType = {
   task: Task;
   setTask: (arg0: Task) => void;
+  reloadTask: () => void;
 };
 
 export const TaskContext = createContext<TaskContextType>({
   task: { task_active: false },
   setTask: () => {},
+  reloadTask: () => {},
 });
 
 export const useTask = () => useContext(TaskContext);
@@ -34,7 +39,7 @@ export const loadTask = async (
     return task.setTask({ task_active: false });
   }
   const data = await value.json();
-  if (data.task === null) {
+  if (!data.task) {
     return task.setTask({ task_active: false });
   }
   task.setTask({

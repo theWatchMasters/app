@@ -13,14 +13,14 @@ import { API_BASE_URL } from '@/constants';
 import Slider from '@react-native-community/slider';
 import { Redirect } from 'expo-router';
 import * as React from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { AuthForm } from '../auth/AuthForm';
 import { useSession } from '../auth/SessionContext';
 import { handleError, handleValidationError } from '../forms/utils';
-import PaymentStub from './payment-stub';
 import { useTask } from './TaskContext';
+import CheckoutScreen, { CheckoutScreenProps } from './checkout-screen';
 
 const MAX_AMOUNT = 100;
 const LENGTH_OPTIONS = [
@@ -46,7 +46,8 @@ export function NewTaskForm() {
   const { t } = useTranslation();
   const session = useSession();
   const { task, setTask } = useTask();
-  const [paymentOpen, setPaymentOpen] = React.useState(false);
+  const [paymentIntent, setPaymentIntent] =
+    React.useState<CheckoutScreenProps | null>(null);
 
   const { control, handleSubmit } = useForm<INewTaskType>({
     defaultValues: {
@@ -55,16 +56,18 @@ export function NewTaskForm() {
       amount: 0,
     },
   });
+  const amount = useWatch({ control, name: 'amount' });
 
   if (!session.session.signed_in) {
     return <Redirect href="/login" />;
   }
 
   const onSuccess = async ({ response }: { response: Response }) => {
-    setPaymentOpen(true);
+    const data = await response.json();
+    setPaymentIntent(data.intent);
     setTask({
       task_active: true,
-      ...(await response.json()).task,
+      ...data.task,
     });
   };
 
@@ -184,7 +187,7 @@ export function NewTaskForm() {
                 <Text>{t('vault_new.continue')}</Text>
               </Button>
             </View>
-            <PaymentStub open={paymentOpen} setOpen={setPaymentOpen} />
+            {paymentIntent && <CheckoutScreen {...paymentIntent} />}
           </CardContent>
         </Card>
       )}

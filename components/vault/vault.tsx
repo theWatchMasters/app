@@ -1,4 +1,5 @@
 import { API_BASE_URL } from '@/constants';
+import { useStripe } from '@stripe/stripe-react-native';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable } from 'react-native';
@@ -12,6 +13,18 @@ export default function Vault() {
   const { task, setTask } = useTask();
   const session = useSession();
   const [timer, setTimer] = useState('00:00:00');
+  const { initPaymentSheet, presentPaymentSheet } = useStripe();
+
+  const initializePaymentSheet = async () => {
+    if (!task.task_active) return;
+    const { error } = await initPaymentSheet({
+      merchantDisplayName: 'theWatchMasters',
+      paymentIntentClientSecret: task.payment_intent_client_secret,
+    });
+    if (error) {
+      // handle error
+    }
+  };
   useEffect(() => {
     if (task.task_active) {
       const interval = setInterval(() => {
@@ -45,6 +58,25 @@ export default function Vault() {
       return () => clearInterval(interval);
     }
   }, [task, setTimer, session, setTask]);
+  useEffect(() => {
+    initializePaymentSheet();
+  }, [task]);
+
+  const onPayPress = async () => {
+    const { error } = await presentPaymentSheet();
+    if (error || !task.task_active) {
+      return;
+    }
+    await authFetch(session, API_BASE_URL + 'vault/pay', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        intent: task.payment_intent,
+      }),
+    });
+  };
   const onSubmit = async () => {
     if (!task.task_active) return;
     await authFetch(session, API_BASE_URL + 'vault/complete', {
@@ -56,6 +88,7 @@ export default function Vault() {
         id: task.id,
       }),
     });
+
     setTask({ task_active: false });
   };
   return (
@@ -69,6 +102,9 @@ export default function Vault() {
                 borderBottomLeftRadius: 0,
                 borderBottomRightRadius: 0,
                 borderBottomWidth: 0,
+                ...(task.payment_status === 'UNPAID' && {
+                  borderColor: 'green',
+                }),
               }
             : {}
         }
@@ -80,9 +116,18 @@ export default function Vault() {
           </CardDescription>
         </CardHeader>
       </Card>
-      {task.task_active && (
+      {task.task_active && task.payment_status !== 'UNPAID' && (
         <Button className="rounded-t-none" onPress={onSubmit}>
           <Text className="text-lg font-bold">SUBMIT</Text>
+        </Button>
+      )}
+      {task.task_active && task.payment_status === 'UNPAID' && (
+        <Button
+          className="rounded-t-none"
+          style={{ backgroundColor: 'green' }}
+          onPress={onPayPress}
+        >
+          <Text className="text-lg font-bold">PAY</Text>
         </Button>
       )}
     </Pressable>
